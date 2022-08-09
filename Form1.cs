@@ -1,10 +1,37 @@
 namespace Brickbreaker {
     public partial class Form1 : Form {
+        //Global Variables :(
+        //if I put them into separate classes I don't think I need much here
+        int score;
+        Random random = new Random();
+        Button[] btnArray;
+        Boolean gameOver;
+        //highscore class variable - NYI
+        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+
+
         public Form1() {
             InitializeComponent();
+            score = 0;
+            gameOver = false;
+            btnArray = new Button[256];
+            Gameboard.Controls.CopyTo(btnArray, 0);
+
+            timer.Interval = 300;
+            timer.Tick += new EventHandler(TimerEventProcessor);
+
+            //start
+            timer.Start();
         }
 
-        private void Form1_Load(object sender, EventArgs e) {
+        private void TimerEventProcessor(Object anObject, EventArgs eventargs) {
+            //logic here
+            if (!gameOver) {
+                //logic
+            }
+            else {
+                //gameOver() //display gameover menu / highscore / etc. 
+            }
 
         }
 
@@ -17,9 +44,6 @@ namespace Brickbreaker {
         Int ballPosition
         Int trajectoryX
         Int trajectoryY
-
-
-
 
         */
 
@@ -50,16 +74,5 @@ namespace Brickbreaker {
 
         //circle icon for the ball
         //bricks and paddle can stay backround colors
-
-
-
-
-
-
-
-
-
-
-
     }
 }
