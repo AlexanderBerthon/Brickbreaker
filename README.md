@@ -5,7 +5,7 @@
   </section>
   <section>
     <ul>To Do for MVP:
-      <ul><s>Front End</s>
+      <ul>Front End
         <ul>Application Icon</ul>
         <ul>Button Grid</ul>
         <ul>Ball Icon</ul>
@@ -35,9 +35,5 @@
         <ul>Scoreboard</ul>
         </ul>
   </section>
-      
-      
-
-https://user-images.githubusercontent.com/71737894/175749679-7bfcb473-32c1-417f-a8c1-08f8ae7bd718.mp4
 
 
