@@ -6,6 +6,9 @@ namespace Brickbreaker {
         Random random = new Random();
         Button[] btnArray;
         Boolean gameOver;
+
+        Ball ball;
+
         //highscore class variable - NYI
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
 
@@ -16,6 +19,10 @@ namespace Brickbreaker {
             gameOver = false;
             btnArray = new Button[256];
             Gameboard.Controls.CopyTo(btnArray, 0);
+
+            ball = new Ball();
+
+
 
             timer.Interval = 300;
             timer.Tick += new EventHandler(TimerEventProcessor);
@@ -28,8 +35,40 @@ namespace Brickbreaker {
             //logic here
             if (!gameOver) {
                 //logic
+
+                //ball movement
+                //erase ball display
+                btnArray[ball.getIndex()].BackColor = Color.Black;
+                //update position
+                if(btnArray[ball.nextMove()].Tag == "Bottom Border") {
+                    ball.bottomBorderCollision();
+                    //gameOver = true;
+                }
+                else if(btnArray[ball.nextMove()].Tag == "Left Border") {
+                    ball.leftBorderCollision();
+                } 
+                else if(btnArray[ball.nextMove()].Tag == "Right Border") {
+                    ball.rightBorderCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                    ball.topBorderCollision();
+                }
+                else if(btnArray[ball.nextMove()].BackColor == Color.Red){ // TODO: replace with real paddle color
+                    //this might look a little janky, but it makes sense logically
+                }
+                else { }
+                
+                ball.update();
+                
+
+                if (!gameOver) {
+                    //redraw ball
+                    btnArray[ball.getIndex()].BackColor = Color.Red; // TODO: change to icon
+                }
+
             }
             else {
+                Application.Exit();
                 //gameOver() //display gameover menu / highscore / etc. 
             }
 
