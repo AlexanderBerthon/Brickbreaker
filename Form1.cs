@@ -8,6 +8,7 @@ namespace Brickbreaker {
         Boolean gameOver;
 
         Ball ball;
+        Paddle paddle;
 
         //highscore class variable - NYI
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
@@ -21,7 +22,10 @@ namespace Brickbreaker {
             Gameboard.Controls.CopyTo(btnArray, 0);
 
             ball = new Ball();
-
+            paddle = new Paddle();
+            btnArray[paddle.getIndex()].BackColor = Color.Red;
+            btnArray[paddle.getIndex()-1].BackColor = Color.Red;
+            btnArray[paddle.getIndex()+1].BackColor = Color.Red;
 
 
             timer.Interval = 300;
@@ -35,6 +39,7 @@ namespace Brickbreaker {
             //logic here
             if (!gameOver) {
                 //logic
+
 
                 //ball movement
                 //erase ball display
@@ -59,12 +64,29 @@ namespace Brickbreaker {
                 else { }
                 
                 ball.update();
-                
 
-                if (!gameOver) {
+                if(paddle.update() > 0){
+                    //remove old
+                    btnArray[paddle.getIndex() - 2].BackColor = Color.Black;
+
+                    //add new
+                    btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+                }
+                else {
+                    //remove old
+                    btnArray[paddle.getIndex() + 2].BackColor = Color.Black;
+
+                    //add new
+                    btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
+                }
+                paddle.clear();
+
+            if (!gameOver) {
                     //redraw ball
                     btnArray[ball.getIndex()].BackColor = Color.Red; // TODO: change to icon
                 }
+
+           
 
             }
             else {
@@ -72,6 +94,16 @@ namespace Brickbreaker {
                 //gameOver() //display gameover menu / highscore / etc. 
             }
 
+        }
+
+        private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
+            btnArray[0].BackColor = Color.Purple;
+            if (e.KeyChar == 'a') {
+                paddle.queueMove(-1);
+            }
+            else if (e.KeyChar == 'd') {
+                paddle.queueMove(1);
+            }
         }
 
         //Variables
@@ -96,7 +128,7 @@ namespace Brickbreaker {
         //ball hits right part, goes diagonal up-right
 
         //ball hits a wall, reverse x-trajectory but maintain y
-        
+
         //ball collides with brick or top border, reverse y-trajectory rng x 
 
         //ball collides with bottom border, end game
