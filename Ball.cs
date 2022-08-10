@@ -25,7 +25,7 @@ namespace Brickbreaker {
         public Ball() {
             random = new Random();
             currentIndex = random.Next(97, 111);
-            trajectory = -16; //testing, change back to +16
+            trajectory = 16;
         }
 
         public void update() {
