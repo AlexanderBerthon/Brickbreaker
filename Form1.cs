@@ -13,7 +13,6 @@ namespace Brickbreaker {
         //highscore class variable - NYI
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
 
-
         public Form1() {
             InitializeComponent();
             score = 0;
@@ -93,17 +92,17 @@ namespace Brickbreaker {
                 Application.Exit();
                 //gameOver() //display gameover menu / highscore / etc. 
             }
-
         }
 
+
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
-            btnArray[0].BackColor = Color.Purple;
-            if (e.KeyChar == 'a') {
+            if (e.KeyChar == 'a' && paddle.getIndex() > 210) {
                 paddle.queueMove(-1);
             }
-            else if (e.KeyChar == 'd') {
+            else if (e.KeyChar == 'd' && paddle.getIndex() < 221) {
                 paddle.queueMove(1);
             }
+            
         }
 
         //Variables
