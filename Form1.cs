@@ -23,8 +23,11 @@ namespace Brickbreaker {
             ball = new Ball();
             paddle = new Paddle();
             btnArray[paddle.getIndex()].BackColor = Color.Red;
-            btnArray[paddle.getIndex()-1].BackColor = Color.Red;
-            btnArray[paddle.getIndex()+1].BackColor = Color.Red;
+            btnArray[paddle.getIndex()].Tag = "center";
+            btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
+            btnArray[paddle.getIndex() - 1].Tag = "left";
+            btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 1].Tag = "right";
 
 
             timer.Interval = 300;
@@ -35,47 +38,54 @@ namespace Brickbreaker {
         }
 
         private void TimerEventProcessor(Object anObject, EventArgs eventargs) {
-            //logic here
             if (!gameOver) {
                 //logic
 
-
+                // TODO: Reorder the if else block based on frequency, ie. hitting a brick and paddle occur far more often, so should be at the top for efficiency
                 //ball movement
                 //erase ball display
-                btnArray[ball.getIndex()].BackColor = Color.Black;
+                btnArray[ball.getIndex()].BackgroundImage = null;
                 //update position
-                if(btnArray[ball.nextMove()].Tag == "Bottom Border") {
-                    ball.bottomBorderCollision();
-                    //gameOver = true;
+                if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
+                    Application.Exit();
+                    gameOver = true;
                 }
-                else if(btnArray[ball.nextMove()].Tag == "Left Border") {
+                else if (btnArray[ball.nextMove()].Tag == "Left Border") {
                     ball.leftBorderCollision();
-                } 
-                else if(btnArray[ball.nextMove()].Tag == "Right Border") {
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Right Border") {
                     ball.rightBorderCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
                     ball.topBorderCollision();
                 }
-                else if(btnArray[ball.nextMove()].BackColor == Color.Red){ // TODO: replace with real paddle color
-                    //this might look a little janky, but it makes sense logically
+                else if (btnArray[ball.nextMove()].Tag == "left") {
+                    ball.leftPaddleCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "right") {
+                    ball.rightPaddleCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "center") {
+                    ball.centerPaddleCollision();
                 }
                 else { }
                 
                 ball.update();
 
-                if(paddle.update() > 0){
-                    //remove old
+                if(paddle.update() > 0){ //move right
                     btnArray[paddle.getIndex() - 2].BackColor = Color.Black;
-
-                    //add new
+                    btnArray[paddle.getIndex() - 2].Tag = "";
+                    btnArray[paddle.getIndex() - 1].Tag = "left";
+                    btnArray[paddle.getIndex()].Tag = "center";
+                    btnArray[paddle.getIndex() + 1].Tag = "right";
                     btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
                 }
-                else {
-                    //remove old
+                else { //move left
                     btnArray[paddle.getIndex() + 2].BackColor = Color.Black;
-
-                    //add new
+                    btnArray[paddle.getIndex() + 2].Tag = "";
+                    btnArray[paddle.getIndex() + 1].Tag = "right";
+                    btnArray[paddle.getIndex()].Tag = "center";
+                    btnArray[paddle.getIndex() - 1].Tag = "left";
                     btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
                 }
                 paddle.clear();
@@ -84,9 +94,6 @@ namespace Brickbreaker {
                     //redraw ball
                     btnArray[ball.getIndex()].BackColor = Color.Red; // TODO: change to icon
                 }
-
-           
-
             }
             else {
                 Application.Exit();
