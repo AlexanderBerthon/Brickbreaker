@@ -16,9 +16,8 @@ namespace Brickbreaker {
             index = 215;
         }
 
-        public int update() {
+        public void update() {
             index += nextMove;            
-            return nextMove;
         }
 
         public int getIndex() {
@@ -27,6 +26,10 @@ namespace Brickbreaker {
 
         public void queueMove(int movement) {
             nextMove = movement;
+        }
+
+        public int getNextMove() {
+            return nextMove;
         }
 
         public void clear() {

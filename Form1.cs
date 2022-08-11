@@ -23,14 +23,40 @@ namespace Brickbreaker {
             ball = new Ball();
             paddle = new Paddle();
             btnArray[paddle.getIndex()].BackColor = Color.Red;
-            btnArray[paddle.getIndex()].Tag = "center";
+            btnArray[paddle.getIndex()].Tag = "Center";
             btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
-            btnArray[paddle.getIndex() - 1].Tag = "left";
+            btnArray[paddle.getIndex() - 1].Tag = "Left";
             btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
-            btnArray[paddle.getIndex() + 1].Tag = "right";
+            btnArray[paddle.getIndex() + 1].Tag = "Right";
 
+            for (int i = 17; i < 47; i++) {
+                if (i != 31 && i != 32) {
+                    int j = random.Next(0, 6);
+                    btnArray[i].Tag = "Brick";
+                    switch (j) {
+                        case 0:
+                            btnArray[i].BackColor = Color.Red;
+                            break;
+                        case 1:
+                            btnArray[i].BackColor = Color.Blue;
+                            break;
+                        case 2:
+                            btnArray[i].BackColor = Color.Green;
+                            break;
+                        case 3:
+                            btnArray[i].BackColor = Color.Purple;
+                            break;
+                        case 4:
+                            btnArray[i].BackColor = Color.Yellow;
+                            break;
+                        case 5:
+                            btnArray[i].BackColor = Color.Orange;
+                            break;
+                    }
+                }
+            }
 
-            timer.Interval = 300;
+            timer.Interval = 100;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             //start
@@ -41,58 +67,72 @@ namespace Brickbreaker {
             if (!gameOver) {
                 //logic
 
-                // TODO: Reorder the if else block based on frequency, ie. hitting a brick and paddle occur far more often, so should be at the top for efficiency
                 //ball movement
                 //erase ball display
                 btnArray[ball.getIndex()].BackgroundImage = null;
                 //update position
-                if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
-                    Application.Exit();
-                    gameOver = true;
+                if(btnArray[ball.nextMove()].Tag == "Brick") {
+                    btnArray[ball.nextMove()].BackColor = Color.Black;
+                    btnArray[ball.nextMove()].Tag = "";
+                    btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                    btnArray[ball.getIndex() - 16].Tag = "";
+                    ball.topBorderCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Left Border") {
                     ball.leftBorderCollision();
+                    if (btnArray[ball.nextMove()].Tag == "Center"){
+                        ball.leftPaddleCollision();
+                    }
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Right Border") {
                     ball.rightBorderCollision();
+                    if (btnArray[ball.nextMove()].Tag == "Center") {
+                        ball.leftPaddleCollision();
+                    }
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Left") {                    
+                    ball.leftPaddleCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Right") {
+                    ball.rightPaddleCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Center") {
+                    ball.centerPaddleCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
                     ball.topBorderCollision();
                 }
-                else if (btnArray[ball.nextMove()].Tag == "left") {
-                    ball.leftPaddleCollision();
-                }
-                else if (btnArray[ball.nextMove()].Tag == "right") {
-                    ball.rightPaddleCollision();
-                }
-                else if (btnArray[ball.nextMove()].Tag == "center") {
-                    ball.centerPaddleCollision();
+                else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
+                    Application.Exit();
+                    gameOver = true;
                 }
                 else { }
                 
                 ball.update();
+                paddle.update();
 
-                if(paddle.update() > 0){ //move right
-                    btnArray[paddle.getIndex() - 2].BackColor = Color.Black;
-                    btnArray[paddle.getIndex() - 2].Tag = "";
-                    btnArray[paddle.getIndex() - 1].Tag = "left";
-                    btnArray[paddle.getIndex()].Tag = "center";
-                    btnArray[paddle.getIndex() + 1].Tag = "right";
-                    btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
-                }
-                else { //move left
+                if (paddle.getNextMove() == -1) {
                     btnArray[paddle.getIndex() + 2].BackColor = Color.Black;
                     btnArray[paddle.getIndex() + 2].Tag = "";
-                    btnArray[paddle.getIndex() + 1].Tag = "right";
-                    btnArray[paddle.getIndex()].Tag = "center";
-                    btnArray[paddle.getIndex() - 1].Tag = "left";
+                    btnArray[paddle.getIndex() + 1].Tag = "Right";
+                    btnArray[paddle.getIndex()].Tag = "Center";
+                    btnArray[paddle.getIndex() - 1].Tag = "Left";
                     btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
                 }
-                paddle.clear();
+                else if(paddle.getNextMove() == 1) {
+                    btnArray[paddle.getIndex() - 2].BackColor = Color.Black;
+                    btnArray[paddle.getIndex() - 2].Tag = "";
+                    btnArray[paddle.getIndex() - 1].Tag = "Left";
+                    btnArray[paddle.getIndex()].Tag = "Center";
+                    btnArray[paddle.getIndex() + 1].Tag = "Right";
+                    btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+                }
 
+                paddle.clear();
+               
             if (!gameOver) {
                     //redraw ball
-                    btnArray[ball.getIndex()].BackColor = Color.Red; // TODO: change to icon
+                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb;
                 }
             }
             else {
@@ -111,45 +151,5 @@ namespace Brickbreaker {
             }
             
         }
-
-        //Variables
-        /*
-        Int score
-        
-        //make this into a ball class? most likely
-        //can make methods to change more easily
-        Int ballPosition
-        Int trajectoryX
-        Int trajectoryY
-
-        */
-
-        //pick a random index below half way point (120+ closest row) to spawn the ball
-
-        //randomly generate colored squares across the top 3-5 rows?
-
-        //paddle should spawn in the middle every time, 3 or 5 length 
-        //ball hits middle part, goes straight up
-        //ball hits left part, goes diagonal up-left
-        //ball hits right part, goes diagonal up-right
-
-        //ball hits a wall, reverse x-trajectory but maintain y
-
-        //ball collides with brick or top border, reverse y-trajectory rng x 
-
-        //ball collides with bottom border, end game
-
-        //chain colored bricks together? or pixel by pixel?
-        //I think chain could work, but doesn't make sense vertically
-        //like hitting a brick on the third row shouldn't ever break a tile on the second
-        //row but maybe break 2 bricks on the 3rd row if they are the same color and next to eachother
-        //can assign a different color group to each row if necessary and limit the rng
-        //red green blue
-        //yellow orange purple
-        //red green blue
-        //etc. 
-
-        //circle icon for the ball
-        //bricks and paddle can stay backround colors
     }
 }
