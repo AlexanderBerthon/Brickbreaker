@@ -23,8 +23,7 @@ namespace Brickbreaker {
 
 
         public Ball() {
-            random = new Random();
-            currentIndex = random.Next(97, 111);
+            currentIndex = 107;
             trajectory = 16;
         }
 
@@ -73,15 +72,7 @@ namespace Brickbreaker {
         public void topBorderCollision() {
             //invert trajectory and scramble direction?
             //this works unless it hits the top at the top left corner or top right corner, then it will have weird behavior. might need a check for that
-            if(trajectory == -16) {
-                if(random.Next(0, 2) == 0) {
-                    trajectory = 15;
-                }
-                else {
-                    trajectory = 17;
-                }
-            }
-            else if(trajectory == -15) {
+            if(trajectory == -15) {
                 trajectory = 17;
             }
             else {

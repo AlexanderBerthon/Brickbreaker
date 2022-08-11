@@ -92,7 +92,7 @@ namespace Brickbreaker {
 
             if (!gameOver) {
                     //redraw ball
-                    btnArray[ball.getIndex()].BackColor = Color.Red; // TODO: change to icon
+                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb; // TODO: change to icon
                 }
             }
             else {
