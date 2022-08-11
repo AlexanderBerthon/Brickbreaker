@@ -17,7 +17,7 @@ namespace Brickbreaker {
         }
 
         public int update() {
-            index += nextMove;
+            index += nextMove;            
             return nextMove;
         }
 
