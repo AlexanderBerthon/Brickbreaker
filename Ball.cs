@@ -23,8 +23,8 @@ namespace Brickbreaker {
 
 
         public Ball() {
-            currentIndex = 107;
-            trajectory = 16;
+            currentIndex = 199;
+            trajectory = -16;
         }
 
         public void update() {
