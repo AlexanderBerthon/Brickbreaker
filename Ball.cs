@@ -55,16 +55,20 @@ namespace Brickbreaker {
             }
         }
 
-        public void bottomBorderCollision() {
-            //testing only you can delete this after as it wont be used
-            if(trajectory == 15) {
+        public void leftPaddleCollision() {
+            trajectory = -17;
+        }
+        public void rightPaddleCollision() {
+            trajectory = -15;
+        }
+        public void centerPaddleCollision() {
+            if (trajectory == 15) {
                 trajectory = -17;
             }
             else {
                 trajectory = -15;
             }
         }
-
         //test all this individually first, will make it easier
         public void topBorderCollision() {
             //invert trajectory and scramble direction?
