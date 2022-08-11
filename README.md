@@ -7,17 +7,18 @@
     <ul>To Do for MVP:
       <ul>Front End
         <ul>Application Icon</ul>
-        <ul>Button Grid</ul>
+        <ul><s>Button Grid</s></ul>
         <ul>Ball Icon</ul>
-        <ul>Paddle</ul>
+        <ul><s>Paddle</s></ul>
         <ul><s>Border</s></ul>
         <ul>Bricks</ul>
         <ul>Game Over Screen</ul>
       </ul>
       <ul>Gameplay
-        <ul>Player Controls / Paddle</ul>
+        <ul><s>Player Controls / Paddle</s></ul>
         <ul><s>Wall Collision</s></ul>
         <ul>Brick Collision</ul>
+        <ul>Paddle Collision</ul>
         <ul>Points</ul>
         <ul>Main Game Loop
         <ul>Game over</ul>
