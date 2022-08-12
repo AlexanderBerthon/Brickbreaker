@@ -46,7 +46,9 @@ namespace Brickbreaker {
         Paddle paddle;
 
         //highscore class variable - NYI
-        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer timer;
+
+        System.Windows.Forms.Timer timer2;
 
         public Form1() {
             InitializeComponent();
@@ -57,6 +59,9 @@ namespace Brickbreaker {
 
             ball = new Ball();
             paddle = new Paddle();
+
+            timer = new System.Windows.Forms.Timer();
+            timer2 = new System.Windows.Forms.Timer();
 
             //change to [index] [ + 1 ] [ + 2 ] [ + 3 ]
             //have to change all the logic to go with this..
@@ -96,11 +101,15 @@ namespace Brickbreaker {
                 }
             }
 
-            timer.Interval = 250;
+            timer.Interval = 150;
             timer.Tick += new EventHandler(TimerEventProcessor);
+
+            timer2.Interval = 150;
+            timer2.Tick += new EventHandler(TimerEventProcessor2);
 
             //start
             timer.Start();
+            timer2.Start();
         }
 
         private void TimerEventProcessor(Object anObject, EventArgs eventargs) {
@@ -153,9 +162,22 @@ namespace Brickbreaker {
                 }
                 else { }
                 
-                ball.update();
+            ball.update();
+               
+            if (!gameOver) {
+                    //redraw ball
+                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb;
+                }
+            }
+            else {
+                Application.Exit();
+                //gameOver() //display gameover menu / highscore / etc. 
+            }
+        }
+
+        private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
+            if (!gameOver) {
                 paddle.update();
-                //[] [] [] [] []
                 if (paddle.getNextMove() == -1) {
                     btnArray[paddle.getIndex()].BackColor = Color.Red;
                     btnArray[paddle.getIndex()].Tag = "Paddle 1";
@@ -169,7 +191,7 @@ namespace Brickbreaker {
                     btnArray[paddle.getIndex() + 4].BackColor = Color.Black;
                     btnArray[paddle.getIndex() + 4].Tag = "";
                 }
-                else if(paddle.getNextMove() == 1) {
+                else if (paddle.getNextMove() == 1) {
                     btnArray[paddle.getIndex() - 1].BackColor = Color.Black;
                     btnArray[paddle.getIndex() - 1].Tag = "";
 
@@ -184,17 +206,9 @@ namespace Brickbreaker {
                 }
 
                 paddle.clear();
-               
-            if (!gameOver) {
-                    //redraw ball
-                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb;
-                }
-            }
-            else {
-                Application.Exit();
-                //gameOver() //display gameover menu / highscore / etc. 
             }
         }
+
 
 
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {

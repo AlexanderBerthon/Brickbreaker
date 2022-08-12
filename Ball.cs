@@ -62,7 +62,12 @@ namespace Brickbreaker {
             trajectory = -15;
         }
         public void centerPaddleCollision() {
-            trajectory = -16;
+            if (random.Next(0, 2) == 0) {
+                trajectory = -15;
+            }
+            else {
+                trajectory = -17;
+            }
         }
         //test all this individually first, will make it easier
         public void topBorderCollision() {
