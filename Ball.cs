@@ -25,6 +25,7 @@ namespace Brickbreaker {
         public Ball() {
             currentIndex = 199;
             trajectory = -16;
+            random = new Random();
         }
 
         public void update() {
@@ -61,12 +62,7 @@ namespace Brickbreaker {
             trajectory = -15;
         }
         public void centerPaddleCollision() {
-            if (trajectory == 15) {
-                trajectory = -17;
-            }
-            else {
-                trajectory = -15;
-            }
+            trajectory = -16;
         }
         //test all this individually first, will make it easier
         public void topBorderCollision() {
@@ -75,10 +71,17 @@ namespace Brickbreaker {
             if(trajectory == -15) {
                 trajectory = 17;
             }
-            else {
+            else if(trajectory == -17){
                 trajectory = 15;
             }
-
+            else {
+                if(random.Next(0, 2)==0){
+                    trajectory = 15;
+                }
+                else {
+                    trajectory = 17;
+                }
+            }
         }
 
         public int getIndex() {
