@@ -1,7 +1,42 @@
 namespace Brickbreaker {
+
+    /*
+    need better collision logic
+    left and right need redirect, so they don't skip past row 1 //multi directional in same tick
+    brick collision needs context. if collision happens and there is a brick to the left
+    deflect up right, insead of always back the way it came
+    similar to if there was a brick on the right of it, deflect up left
+
+    [1]  [2]
+    [3]()
+         \
+          \
+           \
+
+    with current logic, this situation would take out box 1, then deflect backwards
+    along the same path the ball came from
+
+    better logic would be to take out cube 3, redirect up to 2, then redirect down left
+          /
+    [1]  /
+       ()
+
+    it is just hard because the ball travels diagonally, so even if visually it makes sense
+    to destroy the adjacent tiles, logically it messes up the pathing, and will cause weirdness
+    almost like you need to remove the tag from [1] but leave the visual
+    and remove the visual from [2] and [3] but keep the tag?
+    what happens to the logic in this situation?
+
+    [1]  [2]
+    [3]()
+
+
+
+    */
+
+
     public partial class Form1 : Form {
         //Global Variables :(
-        //if I put them into separate classes I don't think I need much here
         int score;
         Random random = new Random();
         Button[] btnArray;
@@ -22,15 +57,20 @@ namespace Brickbreaker {
 
             ball = new Ball();
             paddle = new Paddle();
-            btnArray[paddle.getIndex()].BackColor = Color.Red;
-            btnArray[paddle.getIndex()].Tag = "Center";
-            btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
-            btnArray[paddle.getIndex() - 1].Tag = "Left";
-            btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
-            btnArray[paddle.getIndex() + 1].Tag = "Right";
 
-            for (int i = 17; i < 47; i++) {
-                if (i != 31 && i != 32) {
+            //change to [index] [ + 1 ] [ + 2 ] [ + 3 ]
+            //have to change all the logic to go with this..
+            btnArray[paddle.getIndex()].BackColor = Color.Red;
+            btnArray[paddle.getIndex()].Tag = "Paddle 1";
+            btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+            btnArray[paddle.getIndex() + 2].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+            btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
+
+            for (int i = 17; i < 79; i++) {
+                if (i != 31 && i != 32 && i != 47 && i != 48 && i != 63 && i != 64) {
                     int j = random.Next(0, 6);
                     btnArray[i].Tag = "Brick";
                     switch (j) {
@@ -56,7 +96,7 @@ namespace Brickbreaker {
                 }
             }
 
-            timer.Interval = 100;
+            timer.Interval = 250;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             //start
@@ -72,31 +112,36 @@ namespace Brickbreaker {
                 btnArray[ball.getIndex()].BackgroundImage = null;
                 //update position
                 if(btnArray[ball.nextMove()].Tag == "Brick") {
-                    btnArray[ball.nextMove()].BackColor = Color.Black;
-                    btnArray[ball.nextMove()].Tag = "";
+                    //btnArray[ball.nextMove()].BackColor = Color.Black;
+                    //btnArray[ball.nextMove()].Tag = "";
+                    if (btnArray[ball.getIndex() - 16].BackColor == Color.Black) {
+                        btnArray[ball.nextMove()].BackColor = Color.Black;
+                        btnArray[ball.nextMove()].Tag = "";
+                    }
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
+               
                     ball.topBorderCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Left Border") {
                     ball.leftBorderCollision();
-                    if (btnArray[ball.nextMove()].Tag == "Center"){
+                    if (btnArray[ball.nextMove()].Tag == "Paddle 2"){
                         ball.leftPaddleCollision();
                     }
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Right Border") {
                     ball.rightBorderCollision();
-                    if (btnArray[ball.nextMove()].Tag == "Center") {
+                    if (btnArray[ball.nextMove()].Tag == "Paddle 3") {
                         ball.leftPaddleCollision();
                     }
                 }
-                else if (btnArray[ball.nextMove()].Tag == "Left") {                    
+                else if (btnArray[ball.nextMove()].Tag == "Paddle 1") {                    
                     ball.leftPaddleCollision();
                 }
-                else if (btnArray[ball.nextMove()].Tag == "Right") {
+                else if (btnArray[ball.nextMove()].Tag == "Paddle 4") {
                     ball.rightPaddleCollision();
                 }
-                else if (btnArray[ball.nextMove()].Tag == "Center") {
+                else if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
                     ball.centerPaddleCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
@@ -110,22 +155,32 @@ namespace Brickbreaker {
                 
                 ball.update();
                 paddle.update();
-
+                //[] [] [] [] []
                 if (paddle.getNextMove() == -1) {
-                    btnArray[paddle.getIndex() + 2].BackColor = Color.Black;
-                    btnArray[paddle.getIndex() + 2].Tag = "";
-                    btnArray[paddle.getIndex() + 1].Tag = "Right";
-                    btnArray[paddle.getIndex()].Tag = "Center";
-                    btnArray[paddle.getIndex() - 1].Tag = "Left";
-                    btnArray[paddle.getIndex() - 1].BackColor = Color.Red;
+                    btnArray[paddle.getIndex()].BackColor = Color.Red;
+                    btnArray[paddle.getIndex()].Tag = "Paddle 1";
+
+                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+
+                    btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+
+                    btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
+
+                    btnArray[paddle.getIndex() + 4].BackColor = Color.Black;
+                    btnArray[paddle.getIndex() + 4].Tag = "";
                 }
                 else if(paddle.getNextMove() == 1) {
-                    btnArray[paddle.getIndex() - 2].BackColor = Color.Black;
-                    btnArray[paddle.getIndex() - 2].Tag = "";
-                    btnArray[paddle.getIndex() - 1].Tag = "Left";
-                    btnArray[paddle.getIndex()].Tag = "Center";
-                    btnArray[paddle.getIndex() + 1].Tag = "Right";
-                    btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 1].BackColor = Color.Black;
+                    btnArray[paddle.getIndex() - 1].Tag = "";
+
+                    btnArray[paddle.getIndex()].Tag = "Paddle 1";
+
+                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+
+                    btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+
+                    btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
                 }
 
                 paddle.clear();
@@ -143,10 +198,10 @@ namespace Brickbreaker {
 
 
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == 'a' && paddle.getIndex() > 210) {
+            if (e.KeyChar == 'a' && paddle.getIndex() > 209) {
                 paddle.queueMove(-1);
             }
-            else if (e.KeyChar == 'd' && paddle.getIndex() < 221) {
+            else if (e.KeyChar == 'd' && paddle.getIndex() < 219) {
                 paddle.queueMove(1);
             }
             
