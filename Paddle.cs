@@ -11,9 +11,9 @@ namespace Brickbreaker {
     internal class Paddle {
         private int index;
         private int nextMove;
-
+        
         public Paddle() {
-            index = 215;
+            index = 209; //change back to 215
         }
 
         public void update() {
