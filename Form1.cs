@@ -1,40 +1,5 @@
 namespace Brickbreaker {
 
-    /*
-    need better collision logic
-    left and right need redirect, so they don't skip past row 1 //multi directional in same tick
-    brick collision needs context. if collision happens and there is a brick to the left
-    deflect up right, insead of always back the way it came
-    similar to if there was a brick on the right of it, deflect up left
-
-    [1]  [2]
-    [3]()
-         \
-          \
-           \
-
-    with current logic, this situation would take out box 1, then deflect backwards
-    along the same path the ball came from
-
-    better logic would be to take out cube 3, redirect up to 2, then redirect down left
-          /
-    [1]  /
-       ()
-
-    it is just hard because the ball travels diagonally, so even if visually it makes sense
-    to destroy the adjacent tiles, logically it messes up the pathing, and will cause weirdness
-    almost like you need to remove the tag from [1] but leave the visual
-    and remove the visual from [2] and [3] but keep the tag?
-    what happens to the logic in this situation?
-
-    [1]  [2]
-    [3]()
-
-
-
-    */
-
-
     public partial class Form1 : Form {
         //Global Variables :(
         int score;
@@ -63,8 +28,28 @@ namespace Brickbreaker {
             timer = new System.Windows.Forms.Timer();
             timer2 = new System.Windows.Forms.Timer();
 
+            //209 - 222
+            //below is for testing, remove after
+            //btnArray[paddle.getIndex()].BackColor = Color.Red;
+            btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex()].Tag = "Paddle 1";
+            //btnArray[paddle.getIndex()+13].BackColor = Color.Red;
+            
+            for (int i = 1; i< 13; i++) {
+                //btnArray[paddle.getIndex()+i].BackColor = Color.Red;
+                btnArray[paddle.getIndex() + i].BackgroundImage = Properties.Resources.Paddle;
+                btnArray[paddle.getIndex() + i].Tag = "Paddle 2";
+
+            }
+            btnArray[paddle.getIndex() + 14].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 14].Tag = "Paddle 4";
+
+
+
+
             //change to [index] [ + 1 ] [ + 2 ] [ + 3 ]
             //have to change all the logic to go with this..
+            /* re-enable after testing
             btnArray[paddle.getIndex()].BackColor = Color.Red;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
@@ -73,6 +58,8 @@ namespace Brickbreaker {
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
             btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
             btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
+            */
+
 
             for (int i = 17; i < 79; i++) {
                 if (i != 31 && i != 32 && i != 47 && i != 48 && i != 63 && i != 64) {
@@ -101,7 +88,7 @@ namespace Brickbreaker {
                 }
             }
 
-            timer.Interval = 150;
+            timer.Interval = 500;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             timer2.Interval = 150;
@@ -116,21 +103,67 @@ namespace Brickbreaker {
             if (!gameOver) {
                 //logic
 
-                //ball movement
-                //erase ball display
-                btnArray[ball.getIndex()].BackgroundImage = null;
+                /*
+TODO: brick collison
+
+if trajectory is up right and the block to the right of the balls current pos is a brick
+then destroy that brick and rebound down left
+
+else if trajectory is up left and the block to the left of the balls current pos is a brick
+then destroy that brick and rebound down right
+
+else if there is a brick directly above the balls current pos
+then destroy that brick and rebound opposite of current trajectory
+
+else if none of the above but trajectory next move will hit a brick (current logic)
+then destroy that brick and reboud opposite of current trajectory
+
+else if ... all the rest of the crap / border collisions
+
+try this logic, implement it, and test
+
+*/
+
+                
+
+
+                    //ball movement
+                    //erase ball display
+                    btnArray[ball.getIndex()].BackgroundImage = null;
                 //update position
-                if(btnArray[ball.nextMove()].Tag == "Brick") {
-                    //btnArray[ball.nextMove()].BackColor = Color.Black;
-                    //btnArray[ball.nextMove()].Tag = "";
-                    if (btnArray[ball.getIndex() - 16].BackColor == Color.Black) {
-                        btnArray[ball.nextMove()].BackColor = Color.Black;
-                        btnArray[ball.nextMove()].Tag = "";
+                //this will mess up on the corner since it is run before the border code
+                //|[][][]|
+                //|()    |
+                //|  \   |
+                //overflow sees brick to the "left" (-1 of curent index) even though it is hitting
+                //the border
+                if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
+                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
+                    btnArray[ball.getIndex() + 1].Tag = "";
+                    ball.brickCollision(); 
+                    if(btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        btnArray[ball.getIndex() - 16].Tag = "";
                     }
+                }
+                else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                    btnArray[ball.getIndex() - 1].BackColor = Color.Black;
+                    btnArray[ball.getIndex() - 1].Tag = "";
+                    ball.brickCollision();
+                    if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        btnArray[ball.getIndex() - 16].Tag = "";
+                    }
+                }
+                else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
-               
                     ball.topBorderCollision();
+                }
+                else if (btnArray[ball.nextMove()].Tag == "Brick") {
+                    btnArray[ball.nextMove()].BackColor = Color.Black;
+                    btnArray[ball.nextMove()].Tag = "";
+                    ball.brickCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Left Border") {
                     ball.leftBorderCollision();
@@ -175,11 +208,14 @@ namespace Brickbreaker {
             }
         }
 
+        //paddle movement clock
         private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
                 paddle.update();
                 if (paddle.getNextMove() == -1) {
-                    btnArray[paddle.getIndex()].BackColor = Color.Red;
+                    //btnArray[paddle.getIndex()].BackColor = Color.Red;
+                    btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
+
                     btnArray[paddle.getIndex()].Tag = "Paddle 1";
 
                     btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
@@ -188,11 +224,13 @@ namespace Brickbreaker {
 
                     btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
 
-                    btnArray[paddle.getIndex() + 4].BackColor = Color.Black;
+                    //btnArray[paddle.getIndex() + 4].BackColor = Color.Black;
+                    btnArray[paddle.getIndex() + 4].BackgroundImage = Properties.Resources.Paddle;
                     btnArray[paddle.getIndex() + 4].Tag = "";
                 }
                 else if (paddle.getNextMove() == 1) {
-                    btnArray[paddle.getIndex() - 1].BackColor = Color.Black;
+                    //btnArray[paddle.getIndex() - 1].BackColor = Color.Black;
+                    btnArray[paddle.getIndex() - 1].BackgroundImage = Properties.Resources.Paddle;
                     btnArray[paddle.getIndex() - 1].Tag = "";
 
                     btnArray[paddle.getIndex()].Tag = "Paddle 1";
@@ -201,7 +239,8 @@ namespace Brickbreaker {
 
                     btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
 
-                    btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
+                    //btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() + 3].BackgroundImage = Properties.Resources.Paddle;
                     btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
                 }
 

@@ -32,6 +32,10 @@ namespace Brickbreaker {
             currentIndex += trajectory;
         }
 
+        public int getTrajectory() {
+            return trajectory;
+        }
+
         //returns the next index the ball will arrive at given the current position and trajectory. Used to trigger collisions
         public int nextMove() {
             return currentIndex + trajectory;
@@ -69,7 +73,20 @@ namespace Brickbreaker {
                 trajectory = -17;
             }
         }
-        //test all this individually first, will make it easier
+
+        public void paddleCollision() {
+
+        }
+
+        public void brickCollision() {
+            if (trajectory == -17) {
+                trajectory = 17;
+            }
+            else if (trajectory == -15) {
+                trajectory = 15;
+            }
+        }
+
         public void topBorderCollision() {
             //invert trajectory and scramble direction?
             //this works unless it hits the top at the top left corner or top right corner, then it will have weird behavior. might need a check for that
