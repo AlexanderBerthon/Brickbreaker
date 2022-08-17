@@ -160,6 +160,29 @@ try this logic, implement it, and test
                     btnArray[ball.getIndex() - 16].Tag = "";
                     ball.topBorderCollision();
                 }
+                else if (ball.getTrajectory() == + 15 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                    btnArray[ball.getIndex() - 1].BackColor = Color.Black;
+                    btnArray[ball.getIndex() - 1].Tag = "";
+                    ball.brickCollision();
+                    if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
+                        btnArray[ball.getIndex() + 16].Tag = "";
+                    }
+                }
+                else if (ball.getTrajectory() == + 17 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
+                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
+                    btnArray[ball.getIndex() + 1].Tag = "";
+                    ball.brickCollision();
+                    if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
+                        btnArray[ball.getIndex() + 16].Tag = "";
+                    }
+                }
+                else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                    btnArray[ball.getIndex() + 16].BackColor = Color.Black;
+                    btnArray[ball.getIndex() + 16].Tag = "";
+                    ball.bottomBorderCollision();
+                }
                 else if (btnArray[ball.nextMove()].Tag == "Brick") {
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
@@ -187,7 +210,13 @@ try this logic, implement it, and test
                     ball.centerPaddleCollision();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                    //Finish Logic here**!!**
+                    //if it comes in up right but there is a brick to its bottom right, rebound
+                    //else normal top border collision
+                    //if it comes in up left but there is a brick to its bottom left, rebound
+                    //else normal top border collision
                     ball.topBorderCollision();
+                    
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
                     Application.Exit();

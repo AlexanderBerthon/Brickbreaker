@@ -41,6 +41,16 @@ namespace Brickbreaker {
             return currentIndex + trajectory;
         }
 
+        //change the name, only called when the ball hits a brick from the top // not when the ball collides with the bottom border
+        public void bottomBorderCollision() {
+            if (trajectory == +15) {
+                trajectory = -17;
+            }
+            else if (trajectory == +17) {
+                trajectory = -15;
+            }
+        }
+
         public void leftBorderCollision() {
             if (trajectory > 0) {
                 trajectory = 17;
@@ -74,6 +84,7 @@ namespace Brickbreaker {
             }
         }
 
+        //TDOD: combine logic here for all paddle collisions
         public void paddleCollision() {
 
         }
@@ -84,6 +95,12 @@ namespace Brickbreaker {
             }
             else if (trajectory == -15) {
                 trajectory = 15;
+            }
+            else if (trajectory == 15) {
+                trajectory = -15;
+            }
+            else if(trajectory == 17) {
+                trajectory = -17;
             }
         }
 
