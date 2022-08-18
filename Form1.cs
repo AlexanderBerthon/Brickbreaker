@@ -99,37 +99,12 @@ namespace Brickbreaker {
             timer2.Start();
         }
 
+        //ball timer
         private void TimerEventProcessor(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
-                //logic
+                //erase ball display
+                btnArray[ball.getIndex()].BackgroundImage = null;
 
-                /*
-TODO: brick collison
-
-if trajectory is up right and the block to the right of the balls current pos is a brick
-then destroy that brick and rebound down left
-
-else if trajectory is up left and the block to the left of the balls current pos is a brick
-then destroy that brick and rebound down right
-
-else if there is a brick directly above the balls current pos
-then destroy that brick and rebound opposite of current trajectory
-
-else if none of the above but trajectory next move will hit a brick (current logic)
-then destroy that brick and reboud opposite of current trajectory
-
-else if ... all the rest of the crap / border collisions
-
-try this logic, implement it, and test
-
-*/
-
-                
-
-
-                    //ball movement
-                    //erase ball display
-                    btnArray[ball.getIndex()].BackgroundImage = null;
                 //update position
                 //this will mess up on the corner since it is run before the border code
                 //|[][][]|
@@ -137,6 +112,20 @@ try this logic, implement it, and test
                 //|  \   |
                 //overflow sees brick to the "left" (-1 of curent index) even though it is hitting
                 //the border
+
+                /* 
+                Rebounds if ball "clips" brick to the right                 
+                        []            []
+                    ()[][]    ->    / []   
+                   /              ()   
+
+                
+                Also breaks the brick above it if available
+                  [][][]            []  []
+                    ()[]    ->        / 
+                   /                ()
+
+                */
                 if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
                     btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 1].Tag = "";
@@ -146,6 +135,19 @@ try this logic, implement it, and test
                         btnArray[ball.getIndex() - 16].Tag = "";
                     }
                 }
+                /*
+                Rebounds if ball "clips" brick to the left                 
+                  []            []
+                  [][]()    ->  []   \
+                        \             ()
+                
+                
+                Also breaks the brick above it if available
+                  [][][]        [][]
+                  [][]()    ->  []  \
+                        \            ()
+
+                */
                 else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
                     btnArray[ball.getIndex() - 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 1].Tag = "";
@@ -155,11 +157,20 @@ try this logic, implement it, and test
                         btnArray[ball.getIndex() - 16].Tag = "";
                     }
                 }
+                /*
+                Rebounds if brick above                
+                  [][][]        [][]
+                  []  ()    ->  []   \
+                        \             ()
+                */
                 else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
                     ball.topBorderCollision();
                 }
+                /* 
+                Same logic as before but for opposite trajectory (ball going down)
+               */
                 else if (ball.getTrajectory() == + 15 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
                     btnArray[ball.getIndex() - 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 1].Tag = "";
@@ -169,6 +180,9 @@ try this logic, implement it, and test
                         btnArray[ball.getIndex() + 16].Tag = "";
                     }
                 }
+                /* 
+                Same logic as before but for opposite trajectory (ball going down)
+               */
                 else if (ball.getTrajectory() == + 17 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
                     btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 1].Tag = "";
@@ -178,28 +192,59 @@ try this logic, implement it, and test
                         btnArray[ball.getIndex() + 16].Tag = "";
                     }
                 }
+                /* 
+                Same logic as before but for opposite trajectory (ball going down)
+               */
                 else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
                     btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 16].Tag = "";
-                    ball.bottomBorderCollision();
+                    ball.bottomBorderCollision(); //TODO: rename function
                 }
+                /*
+                Diagonal collision if prioritized last, if no other surrounding bricks
+                   [][]          []  
+                   []  ()    ->  []  \
+                         \            ()
+
+                 */
                 else if (btnArray[ball.nextMove()].Tag == "Brick") {
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
                     ball.brickCollision();
                 }
+                /*
+                left border collision, extra check for bottom left corner exception
+     
+                    |  /        |  ()
+                    |()     ->  | /      
+                    |---        |---
+
+                instead of rebounding down and through the paddle
+
+                 */
                 else if (btnArray[ball.nextMove()].Tag == "Left Border") {
                     ball.leftBorderCollision();
                     if (btnArray[ball.nextMove()].Tag == "Paddle 2"){
                         ball.leftPaddleCollision();
                     }
                 }
+                /*
+                right border collision, extra check for bottom right corner exception
+     
+                      \  |      ()  |
+                       ()|  ->    \ |     
+                      ---|       ---|
+
+                instead of rebounding down and through the paddle
+
+                 */
                 else if (btnArray[ball.nextMove()].Tag == "Right Border") {
                     ball.rightBorderCollision();
                     if (btnArray[ball.nextMove()].Tag == "Paddle 3") {
                         ball.leftPaddleCollision();
                     }
                 }
+                //TODO: Clean up paddle collision logic and bake into a single statement
                 else if (btnArray[ball.nextMove()].Tag == "Paddle 1") {                    
                     ball.leftPaddleCollision();
                 }
@@ -209,14 +254,46 @@ try this logic, implement it, and test
                 else if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
                     ball.centerPaddleCollision();
                 }
+                //this is hard to explain, but it makes sense. maybe.
+                //if it works, the only question is if you do this in 1 tick or 2
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                    ball.topBorderCollision();
+                    if(btnArray[ball.nextMove()].Tag == "Brick") {
+                        if(ball.getTrajectory() == 15) {
+                            btnArray[ball.nextMove()].Tag = "";
+                            btnArray[ball.nextMove()].BackColor = Color.Black;
+                            ball.leftBorderCollision();
+                        }
+                        else if(ball.getTrajectory() == 17) {
+                            btnArray[ball.nextMove()].Tag = "";
+                            btnArray[ball.nextMove()].BackColor = Color.Black;
+                            ball.rightBorderCollision();
+                        }
+                    }
+
+                    //________________________________
+                    //      ()
+                    //[][][]  \
+                    //either destroy the brick to the bottom left and rebound
+                    //or
+                    //estroy the brick in the bottom left, wait a turn, then rebound
+                    //not sure which will look better / more intuitive
+
+                    //________________________________
+                    //    ()  
+                    //[][][]\
+
+                    //________________________________
+                    //[][][]()
+                    //        \
+                    //this situation is already accounted for. both left and right
+
+
                     //Finish Logic here**!!**
                     //if it comes in up right but there is a brick to its bottom right, rebound
                     //else normal top border collision
                     //if it comes in up left but there is a brick to its bottom left, rebound
-                    //else normal top border collision
-                    ball.topBorderCollision();
-                    
+                    //else normal top border collision                    
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
                     Application.Exit();
