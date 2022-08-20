@@ -6,6 +6,7 @@ namespace Brickbreaker {
         Random random = new Random();
         Button[] btnArray;
         Boolean gameOver;
+        Boolean skip;
 
         Ball ball;
         Paddle paddle;
@@ -88,7 +89,7 @@ namespace Brickbreaker {
                 }
             }
 
-            timer.Interval = 500;
+            timer.Interval = 100;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             timer2.Interval = 150;
@@ -102,8 +103,7 @@ namespace Brickbreaker {
         //ball timer
         private void TimerEventProcessor(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
-                //erase ball display
-                btnArray[ball.getIndex()].BackgroundImage = null;
+                btnArray[ball.getIndex()].BackgroundImage = null; //clear previous ball location
 
                 //update position
                 //this will mess up on the corner since it is run before the border code
@@ -124,7 +124,6 @@ namespace Brickbreaker {
                   [][][]            []  []
                     ()[]    ->        / 
                    /                ()
-
                 */
                 if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
                     btnArray[ball.getIndex() + 1].BackColor = Color.Black;
@@ -146,7 +145,6 @@ namespace Brickbreaker {
                   [][][]        [][]
                   [][]()    ->  []  \
                         \            ()
-
                 */
                 else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
                     btnArray[ball.getIndex() - 1].BackColor = Color.Black;
@@ -205,7 +203,6 @@ namespace Brickbreaker {
                    [][]          []  
                    []  ()    ->  []  \
                          \            ()
-
                  */
                 else if (btnArray[ball.nextMove()].Tag == "Brick") {
                     btnArray[ball.nextMove()].BackColor = Color.Black;
@@ -254,58 +251,58 @@ namespace Brickbreaker {
                 else if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
                     ball.centerPaddleCollision();
                 }
-                //this is hard to explain, but it makes sense. maybe.
-                //if it works, the only question is if you do this in 1 tick or 2
+
+                //TODO: Left off here
+                //logic is almost perfect, only issue is right here
+                //try skipping a tick or maybe slowing ball movement down, tested at 100 speed and
+                //it wasn't really clear why the ball acted the way it did and why the deleted brick
+                //was deleted **
+                /*
+                does this make sense?
+
+                --------        ---------
+                  ()  []   -->    /   []
+                 /  []          ()    
+
+                */
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
                     ball.topBorderCollision();
-                    if(btnArray[ball.nextMove()].Tag == "Brick") {
+                    if(btnArray[ball.nextMove()].Tag == "Brick") { //**this logic right here, modify
                         if(ball.getTrajectory() == 15) {
                             btnArray[ball.nextMove()].Tag = "";
                             btnArray[ball.nextMove()].BackColor = Color.Black;
+                            skip = true;
                             ball.leftBorderCollision();
                         }
                         else if(ball.getTrajectory() == 17) {
                             btnArray[ball.nextMove()].Tag = "";
                             btnArray[ball.nextMove()].BackColor = Color.Black;
+                            skip = true; 
                             ball.rightBorderCollision();
                         }
                     }
-
                     //________________________________
                     //      ()
                     //[][][]  \
                     //either destroy the brick to the bottom left and rebound
                     //or
                     //estroy the brick in the bottom left, wait a turn, then rebound
-                    //not sure which will look better / more intuitive
-
-                    //________________________________
-                    //    ()  
-                    //[][][]\
-
-                    //________________________________
-                    //[][][]()
-                    //        \
-                    //this situation is already accounted for. both left and right
-
-
-                    //Finish Logic here**!!**
-                    //if it comes in up right but there is a brick to its bottom right, rebound
-                    //else normal top border collision
-                    //if it comes in up left but there is a brick to its bottom left, rebound
-                    //else normal top border collision                    
+                    //not sure which will look better / more intuitive                  
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
                     Application.Exit();
+                    skip = true;
                     gameOver = true;
                 }
                 else { }
-                
-            ball.update();
-               
-            if (!gameOver) {
-                    //redraw ball
-                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb;
+
+                //skip tick
+                if (!skip) {
+                    ball.update();
+                    btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb; //redraw ball
+                }
+                else {
+                    skip = false;
                 }
             }
             else {
@@ -353,8 +350,6 @@ namespace Brickbreaker {
                 paddle.clear();
             }
         }
-
-
 
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == 'a' && paddle.getIndex() > 209) {
