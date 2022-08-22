@@ -13,7 +13,7 @@ namespace Brickbreaker {
         private int nextMove;
         
         public Paddle() {
-            index = 209; //change back to 215
+            index = 215;
         }
 
         public void update() {

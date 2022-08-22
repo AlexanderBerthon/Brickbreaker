@@ -75,18 +75,13 @@ namespace Brickbreaker {
         public void rightPaddleCollision() {
             trajectory = -15;
         }
-        public void centerPaddleCollision() {
-            if (random.Next(0, 2) == 0) {
+        public void paddleCollision() {
+            if (trajectory == 17) {
                 trajectory = -15;
             }
             else {
                 trajectory = -17;
             }
-        }
-
-        //TDOD: combine logic here for all paddle collisions
-        public void paddleCollision() {
-
         }
 
         public void brickCollision() {

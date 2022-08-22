@@ -29,39 +29,16 @@ namespace Brickbreaker {
             timer = new System.Windows.Forms.Timer();
             timer2 = new System.Windows.Forms.Timer();
 
-            //209 - 222
-            //below is for testing, remove after
-            //btnArray[paddle.getIndex()].BackColor = Color.Red;
+            //215, 216, 217
+            //change to [index] [ + 1 ] [ + 2 ]
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
-            //btnArray[paddle.getIndex()+13].BackColor = Color.Red;
-            
-            for (int i = 1; i< 13; i++) {
-                //btnArray[paddle.getIndex()+i].BackColor = Color.Red;
-                btnArray[paddle.getIndex() + i].BackgroundImage = Properties.Resources.Paddle;
-                btnArray[paddle.getIndex() + i].Tag = "Paddle 2";
-
-            }
-            btnArray[paddle.getIndex() + 14].BackgroundImage = Properties.Resources.Paddle;
-            btnArray[paddle.getIndex() + 14].Tag = "Paddle 4";
-
-
-
-
-            //change to [index] [ + 1 ] [ + 2 ] [ + 3 ]
-            //have to change all the logic to go with this..
-            /* re-enable after testing
-            btnArray[paddle.getIndex()].BackColor = Color.Red;
-            btnArray[paddle.getIndex()].Tag = "Paddle 1";
-            btnArray[paddle.getIndex() + 1].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
-            btnArray[paddle.getIndex() + 2].BackColor = Color.Red;
+            btnArray[paddle.getIndex() + 2].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
-            btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
-            btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
-            */
 
-
+            //print bricks
             for (int i = 17; i < 79; i++) {
                 if (i != 31 && i != 32 && i != 47 && i != 48 && i != 63 && i != 64) {
                     int j = random.Next(0, 6);
@@ -89,7 +66,8 @@ namespace Brickbreaker {
                 }
             }
 
-            timer.Interval = 100;
+            //speed
+            timer.Interval = 400;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             timer2.Interval = 150;
@@ -105,6 +83,7 @@ namespace Brickbreaker {
             if (!gameOver) {
                 btnArray[ball.getIndex()].BackgroundImage = null; //clear previous ball location
 
+                //TODO: Fix this issue
                 //update position
                 //this will mess up on the corner since it is run before the border code
                 //|[][][]|
@@ -112,20 +91,52 @@ namespace Brickbreaker {
                 //|  \   |
                 //overflow sees brick to the "left" (-1 of curent index) even though it is hitting
                 //the border
+                //
+                //this should be fixed now
+                
 
+                /*
+                left border collision, extra check for bottom left corner exception
+
+                |  /        |  ()
+                |()     ->  | /      
+                |---        |---
+                instead of rebounding down and through the paddle
+                */
+                if (btnArray[ball.nextMove()].Tag == "Left Border") {
+                    ball.leftBorderCollision();
+                    if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 1") { 
+                        ball.leftPaddleCollision();
+                    }
+                }
+                /*
+                right border collision, extra check for bottom right corner exception
+     
+                      \  |      ()  |
+                       ()|  ->    \ |     
+                      ---|       ---|
+
+                instead of rebounding down and through the paddle
+                */
+                else if (btnArray[ball.nextMove()].Tag == "Right Border") {
+                    ball.rightBorderCollision();
+                    if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
+                        ball.leftPaddleCollision();
+                    }
+                }
                 /* 
                 Rebounds if ball "clips" brick to the right                 
                         []            []
                     ()[][]    ->    / []   
                    /              ()   
 
-                
+
                 Also breaks the brick above it if available
                   [][][]            []  []
                     ()[]    ->        / 
                    /                ()
                 */
-                if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
+                else if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
                     btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 1].Tag = "";
                     ball.brickCollision(); 
@@ -208,61 +219,23 @@ namespace Brickbreaker {
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
                     ball.brickCollision();
-                }
-                /*
-                left border collision, extra check for bottom left corner exception
-     
-                    |  /        |  ()
-                    |()     ->  | /      
-                    |---        |---
-
-                instead of rebounding down and through the paddle
-
-                 */
-                else if (btnArray[ball.nextMove()].Tag == "Left Border") {
-                    ball.leftBorderCollision();
-                    if (btnArray[ball.nextMove()].Tag == "Paddle 2"){
-                        ball.leftPaddleCollision();
-                    }
-                }
-                /*
-                right border collision, extra check for bottom right corner exception
-     
-                      \  |      ()  |
-                       ()|  ->    \ |     
-                      ---|       ---|
-
-                instead of rebounding down and through the paddle
-
-                 */
-                else if (btnArray[ball.nextMove()].Tag == "Right Border") {
-                    ball.rightBorderCollision();
-                    if (btnArray[ball.nextMove()].Tag == "Paddle 3") {
-                        ball.leftPaddleCollision();
-                    }
-                }
+                }               
                 //TODO: Clean up paddle collision logic and bake into a single statement
-                else if (btnArray[ball.nextMove()].Tag == "Paddle 1") {                    
+                else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") {                    
                     ball.leftPaddleCollision();
                 }
-                else if (btnArray[ball.nextMove()].Tag == "Paddle 4") {
+                else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
                     ball.rightPaddleCollision();
                 }
-                else if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
-                    ball.centerPaddleCollision();
+                else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
+                    btnArray[ball.nextMove()].Tag == "Paddle 2" ||
+                    btnArray[ball.nextMove()].Tag == "Paddle 3") {
+                    ball.paddleCollision();
                 }
-
-                //TODO: Left off here
-                //logic is almost perfect, only issue is right here
-                //try skipping a tick or maybe slowing ball movement down, tested at 100 speed and
-                //it wasn't really clear why the ball acted the way it did and why the deleted brick
-                //was deleted **
                 /*
-                does this make sense?
-
-                --------        ---------
-                  ()  []   -->    /   []
-                 /  []          ()    
+                --------         --------          ---------
+                  ()  []   -->     ()  []    -->       /  []
+                 /  []                               ()    
 
                 */
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
@@ -280,17 +253,9 @@ namespace Brickbreaker {
                             skip = true; 
                             ball.rightBorderCollision();
                         }
-                    }
-                    //________________________________
-                    //      ()
-                    //[][][]  \
-                    //either destroy the brick to the bottom left and rebound
-                    //or
-                    //estroy the brick in the bottom left, wait a turn, then rebound
-                    //not sure which will look better / more intuitive                  
+                    }                  
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
-                    Application.Exit();
                     skip = true;
                     gameOver = true;
                 }
@@ -314,39 +279,29 @@ namespace Brickbreaker {
         //paddle movement clock
         private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
-                paddle.update();
                 if (paddle.getNextMove() == -1) {
-                    //btnArray[paddle.getIndex()].BackColor = Color.Red;
-                    btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
-
-                    btnArray[paddle.getIndex()].Tag = "Paddle 1";
-
-                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
-
-                    btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
-
-                    btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
-
-                    //btnArray[paddle.getIndex() + 4].BackColor = Color.Black;
-                    btnArray[paddle.getIndex() + 4].BackgroundImage = Properties.Resources.Paddle;
-                    btnArray[paddle.getIndex() + 4].Tag = "";
+                    //new slot
+                    btnArray[paddle.getIndex() - 1].BackgroundImage = Properties.Resources.Paddle;
+                    btnArray[paddle.getIndex() - 1].Tag = "Paddle 1";
+                    //recycled slots
+                    btnArray[paddle.getIndex()].Tag = "Paddle 2";
+                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 3";
+                    //removed slot
+                    btnArray[paddle.getIndex() + 2].BackgroundImage = null;
+                    btnArray[paddle.getIndex() + 2].Tag = "";
                 }
                 else if (paddle.getNextMove() == 1) {
-                    //btnArray[paddle.getIndex() - 1].BackColor = Color.Black;
-                    btnArray[paddle.getIndex() - 1].BackgroundImage = Properties.Resources.Paddle;
-                    btnArray[paddle.getIndex() - 1].Tag = "";
-
-                    btnArray[paddle.getIndex()].Tag = "Paddle 1";
-
-                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
-
-                    btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
-
-                    //btnArray[paddle.getIndex() + 3].BackColor = Color.Red;
+                    //removed slot
+                    btnArray[paddle.getIndex()].BackgroundImage = null;
+                    btnArray[paddle.getIndex()].Tag = "";
+                    //recycled slots
+                    btnArray[paddle.getIndex() + 1].Tag = "Paddle 1";
+                    btnArray[paddle.getIndex() + 2].Tag = "Paddle 2";
+                    //new slot
                     btnArray[paddle.getIndex() + 3].BackgroundImage = Properties.Resources.Paddle;
-                    btnArray[paddle.getIndex() + 3].Tag = "Paddle 4";
+                    btnArray[paddle.getIndex() + 3].Tag = "Paddle 3";
                 }
-
+                paddle.update();
                 paddle.clear();
             }
         }
