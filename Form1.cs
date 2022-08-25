@@ -1,4 +1,38 @@
 namespace Brickbreaker {
+    /// <summary>
+    /// 100 bug fixes later there are still issues with collision, left and right borders need to check for
+    /// bricks above, below, and side to side. I thought I fixed this issue already?
+    /// 
+    /// Also, the game seems super predictable and easy now
+    /// every bounce rebounds to the same location. I barely have to move the paddle. it just rebounds back
+    /// and fourth. over and over again. every 50 collisions I have to move the paddle slightly left or right
+    /// then plant again for another 50 moves?
+    /// 
+    /// the border fix didn't work.
+    /// now it changes trajectory up and skips the one above it..
+    /// 
+    /// ways to make the game more interesting / less predictable
+    /// 
+    /// 1) space out the blocks, if you allow gaps for the ball to go through, it can lead to less predictable
+    /// behavior and chains
+    /// 
+    /// 2) indestructible blocks, creates some extra bounces / chaining possibilities
+    /// 
+    /// 3) guards, moving ai paddles that interfere with normal block destruction
+    /// 
+    /// 4) moving blocks, if all the blocks moved around that would certainly make it more random. even if
+    /// you could make a line of blocks that just went left and looped around the other side infinitely.
+    /// 
+    /// 5) any combination of above
+    /// 
+    /// 6) powers, after a certain number of paddle hits, either spawn a power up to catch or give the power
+    /// direct to the player and have spacebar activate it or something. something that can get those
+    /// annoying little pieces that take forever to get naturally. like the top left or right pieces
+    /// 
+    /// 
+    /// 
+    /// </summary>
+
 
     public partial class Form1 : Form {
         //Global Variables :(
@@ -67,7 +101,7 @@ namespace Brickbreaker {
             }
 
             //speed
-            timer.Interval = 400;
+            timer.Interval = 200;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             timer2.Interval = 150;
@@ -104,9 +138,16 @@ namespace Brickbreaker {
                 instead of rebounding down and through the paddle
                 */
                 if (btnArray[ball.nextMove()].Tag == "Left Border") {
-                    ball.leftBorderCollision();
                     if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 1") { 
                         ball.leftPaddleCollision();
+                    }
+                    else if(btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() - 16].Tag = "";
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        ball.brickCollision();
+                    }
+                    else{
+                        ball.leftBorderCollision();
                     }
                 }
                 /*
@@ -119,9 +160,16 @@ namespace Brickbreaker {
                 instead of rebounding down and through the paddle
                 */
                 else if (btnArray[ball.nextMove()].Tag == "Right Border") {
-                    ball.rightBorderCollision();
                     if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
                         ball.leftPaddleCollision();
+                    }
+                    else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        btnArray[ball.getIndex() - 16].Tag = "";
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        ball.brickCollision();
+                    }
+                    else {
+                        ball.rightBorderCollision();
                     }
                 }
                 /* 
