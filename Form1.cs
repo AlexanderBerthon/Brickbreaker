@@ -29,7 +29,14 @@ namespace Brickbreaker {
     /// direct to the player and have spacebar activate it or something. something that can get those
     /// annoying little pieces that take forever to get naturally. like the top left or right pieces
     /// 
+    /// Question:
+    /// rather than literally hard coding every single collision into a logic statement
+    /// is there a way to write it where the logic holds in a variety of situations without needing to be singled out? 
+    /// ... I don't think so
+    /// it just seems so.. amature-ish to write the logic this way.
     /// 
+    /// TODO: Fix skip logic. when you skip, you still delete the image of the ball, so the skipped frame looks like an animation glitch bc the ball disapears still but isn't 
+    /// redrawn
     /// 
     /// </summary>
 
@@ -101,7 +108,7 @@ namespace Brickbreaker {
             }
 
             //speed
-            timer.Interval = 200;
+            timer.Interval = 500;
             timer.Tick += new EventHandler(TimerEventProcessor);
 
             timer2.Interval = 150;
@@ -117,167 +124,241 @@ namespace Brickbreaker {
             if (!gameOver) {
                 btnArray[ball.getIndex()].BackgroundImage = null; //clear previous ball location
 
-                //TODO: Fix this issue
-                //update position
-                //this will mess up on the corner since it is run before the border code
-                //|[][][]|
-                //|()    |
-                //|  \   |
-                //overflow sees brick to the "left" (-1 of curent index) even though it is hitting
-                //the border
-                //
-                //this should be fixed now
-                
-
-                /*
-                left border collision, extra check for bottom left corner exception
-
-                |  /        |  ()
-                |()     ->  | /      
-                |---        |---
-                instead of rebounding down and through the paddle
-                */
+                //logic for left border collisions
                 if (btnArray[ball.nextMove()].Tag == "Left Border") {
-                    if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 1") { 
-                        ball.leftPaddleCollision();
-                    }
-                    else if(btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        ball.brickCollision();
-                    }
-                    else{
-                        ball.leftBorderCollision();
-                    }
-                }
-                /*
-                right border collision, extra check for bottom right corner exception
-     
-                      \  |      ()  |
-                       ()|  ->    \ |     
-                      ---|       ---|
-
-                instead of rebounding down and through the paddle
-                */
-                else if (btnArray[ball.nextMove()].Tag == "Right Border") {
-                    if (btnArray[ball.nextMove()].Tag == "Paddle 2" || btnArray[ball.nextMove()].Tag == "Paddle 3") {
+                    if (btnArray[ball.getIndex() - 16].Tag == "Paddle 1" || btnArray[ball.getIndex() - 17].Tag == "Paddle 1") {
+                        /*
+                        |  /        |  ()
+                        |()     ->  | /      
+                        |---        |---
+                        */
                         ball.leftPaddleCollision();
                     }
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        /*
+                        |[][][]      |  [][]    
+                        |()      ->  | \ 
+                        |  \         |  ()
+                        */
                         btnArray[ball.getIndex() - 16].Tag = "";
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         ball.brickCollision();
                     }
+                    else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
+                        /*
+                        |  [][]      |    []    
+                        |()      ->  | \ 
+                        |  \         |  ()
+                        */
+                        btnArray[ball.getIndex() - 15].Tag = "";
+                        btnArray[ball.getIndex() - 15].BackColor = Color.Black;
+                        ball.brickCollision();
+                    }
+                    else{
+                        /*
+                        |            |  ()
+                        |()      ->  | /
+                        |  \         |
+                        */
+                        ball.leftBorderCollision();
+                    }
+                }
+                //logic for right border collisions
+                else if (btnArray[ball.nextMove()].Tag == "Right Border") {
+                    if(btnArray[ball.getIndex() - 16].Tag == "Paddle 3" || btnArray[ball.getIndex() - 15].Tag == "Paddle 3") {
+                        /*
+                        \  |      ()  |
+                         ()|  ->    \ |     
+                        ---|       ---|
+                        */
+                        ball.leftPaddleCollision();
+                    }
+                    else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        /*
+                        [][][]|       [][]  |    
+                            ()|  ->       / |
+                           /  |         ()  |
+                        */
+                        btnArray[ball.getIndex() - 16].Tag = "";
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        ball.brickCollision();
+                    }
+                    else if (btnArray[ball.getIndex() - 17].Tag == "Brick") {
+                        /*
+                        [][]  |       []    |    
+                            ()|  ->       / |
+                           /  |         ()  |
+                        */
+                        btnArray[ball.getIndex() - 17].Tag = "";
+                        btnArray[ball.getIndex() - 17].BackColor = Color.Black;
+                        ball.brickCollision();
+                    }
                     else {
+                        /*
+                            |         ()  |
+                          ()|  ->       \ |
+                         /  |             |
+                        */
                         ball.rightBorderCollision();
                     }
                 }
-                /* 
-                Rebounds if ball "clips" brick to the right                 
-                        []            []
-                    ()[][]    ->    / []   
-                   /              ()   
-
-
-                Also breaks the brick above it if available
-                  [][][]            []  []
-                    ()[]    ->        / 
-                   /                ()
-                */
+                //up right brick collision
                 else if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() + 1].Tag = "";
-                    ball.brickCollision(); 
-                    if(btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                    }
-                }
-                /*
-                Rebounds if ball "clips" brick to the left                 
-                  []            []
-                  [][]()    ->  []   \
-                        \             ()
-                
-                
-                Also breaks the brick above it if available
-                  [][][]        [][]
-                  [][]()    ->  []  \
-                        \            ()
-                */
-                else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() - 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() - 1].Tag = "";
-                    ball.brickCollision();
                     if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        /*
+                         [][][]          [][]
+                         ()[][]  ->     /  []
+                        /             ()
+                        */
+                        ball.brickCollision();
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
                     }
+                    else {//TODO:Fix diagram if testing goes well
+                        /*
+                                []            []
+                            ()[][]  ->     /  []
+                           /             ()
+                        */
+                        btnArray[ball.getIndex() + 1].BackColor = Color.Black;
+                        btnArray[ball.getIndex() + 1].Tag = "";
+                        //ball.brickCollision();
+                        ball.rightBorderCollision(); //testing
+                    }
                 }
-                /*
-                Rebounds if brick above                
-                  [][][]        [][]
-                  []  ()    ->  []   \
-                        \             ()
-                */
+                //up left brick collision
+                else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                    if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                        /*                
+                        [][][]        [][]
+                        [][]()    ->  []  \
+                              \            ()
+                        */
+                        ball.brickCollision();
+                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
+                        btnArray[ball.getIndex() - 16].Tag = "";
+                    }
+                    else {//TODO:Fix diagram if testing goes well
+                        /*
+                        []            []
+                        [][]()    ->  []   \
+                              \             ()
+                        */
+                        btnArray[ball.getIndex() - 1].BackColor = Color.Black;
+                        btnArray[ball.getIndex() - 1].Tag = "";
+                        //ball.brickCollision();
+                        ball.leftBorderCollision(); //testing
+                    }
+                }
+                //single center up brick collision
                 else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
+                    /*
+                    [][][]        [][]
+                    []  ()    ->  []   \
+                          \             ()
+                    */
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
                     ball.topBorderCollision();
                 }
-                /* 
-                Same logic as before but for opposite trajectory (ball going down)
-               */
+                //down left brick collision
                 else if (ball.getTrajectory() == + 15 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() - 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() - 1].Tag = "";
-                    ball.brickCollision();
                     if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                        /*
+                        []  /         []  ()
+                        []()      ->     /
+                          []            
+                        */
+                        ball.brickCollision();
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 16].Tag = "";
                     }
+                    else {//TODO:Fix diagram if testing goes well
+                        /*
+                        []  /         []  ()
+                        []()      ->     /
+                                  
+                        */
+                        btnArray[ball.getIndex() - 1].BackColor = Color.Black;
+                        btnArray[ball.getIndex() - 1].Tag = "";
+                        //ball.brickCollision();
+                        ball.leftBorderCollision(); //testing
+                    }
                 }
-                /* 
-                Same logic as before but for opposite trajectory (ball going down)
-               */
+               //down right brick collision
                 else if (ball.getTrajectory() == + 17 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() + 1].Tag = "";
-                    ball.brickCollision();
                     if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                        /*
+                           \  []          ()  [] 
+                            ()[]      ->    \ 
+                            []            
+                        */
+                        ball.brickCollision();
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 16].Tag = "";
                     }
+                    else {//TODO:Fix diagram if testing goes well
+                        /*
+                             \  []          ()  [] 
+                              ()[]      ->    \ 
+
+                        */
+                        //TODO: This should probably bounce like a border collision?
+                        btnArray[ball.getIndex() + 1].BackColor = Color.Black;
+                        btnArray[ball.getIndex() + 1].Tag = "";
+                        //ball.brickCollision();
+                        ball.rightBorderCollision(); //testing
+                    }
                 }
-                /* 
-                Same logic as before but for opposite trajectory (ball going down)
-               */
+                //single center down brick collision
                 else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                    /*
+                           \          ()  
+                            ()  ->      \                
+                        [][][]      [][]  
+                    */
                     btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 16].Tag = "";
                     ball.bottomBorderCollision(); //TODO: rename function
                 }
-                /*
-                Diagonal collision if prioritized last, if no other surrounding bricks
-                   [][]          []  
-                   []  ()    ->  []  \
-                         \            ()
-                 */
+                //diagonal collision ~ logic holds for all 4 diagonal collisions
                 else if (btnArray[ball.nextMove()].Tag == "Brick") {
+                    /*
+                       [][]          []  
+                       []  ()    ->  []  \
+                             \            ()
+                    */
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
                     ball.brickCollision();
-                }               
-                //TODO: Clean up paddle collision logic and bake into a single statement
-                else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") {                    
+                }
+                //left edge paddle collision
+                else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") { 
+                    /*
+                    
+                       \            ()    
+                        ()___   ->    \___            
+                    */
                     ball.leftPaddleCollision();
                 }
+                //right edge paddle collision
                 else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
+                    /*
+                    
+                             /          ()
+                        ___()   ->  ___/            
+                    */
                     ball.rightPaddleCollision();
                 }
+                //normal paddle collision
                 else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
                     btnArray[ball.nextMove()].Tag == "Paddle 2" ||
                     btnArray[ball.nextMove()].Tag == "Paddle 3") {
+                    /*
+                           \                ()
+                            ()   ->        / 
+                            ---          ___
+                    */
                     ball.paddleCollision();
                 }
                 /*
@@ -287,9 +368,20 @@ namespace Brickbreaker {
 
                 */
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                    /*
+                        -------      --------
+                         ()      ->       \ 
+                        /                  ()
+                    */
                     ball.topBorderCollision();
                     if(btnArray[ball.nextMove()].Tag == "Brick") { //**this logic right here, modify
-                        if(ball.getTrajectory() == 15) {
+                        /*
+                        --------         --------          ---------
+                          ()  []   -->     ()  []    -->       /  []
+                         /  []                               ()    
+
+                        */
+                        if (ball.getTrajectory() == 15) {
                             btnArray[ball.nextMove()].Tag = "";
                             btnArray[ball.nextMove()].BackColor = Color.Black;
                             skip = true;
@@ -303,6 +395,7 @@ namespace Brickbreaker {
                         }
                     }                  
                 }
+                //bottom border collision
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
                     skip = true;
                     gameOver = true;
@@ -358,7 +451,7 @@ namespace Brickbreaker {
             if (e.KeyChar == 'a' && paddle.getIndex() > 209) {
                 paddle.queueMove(-1);
             }
-            else if (e.KeyChar == 'd' && paddle.getIndex() < 219) {
+            else if (e.KeyChar == 'd' && paddle.getIndex() < 220) {
                 paddle.queueMove(1);
             }
             
