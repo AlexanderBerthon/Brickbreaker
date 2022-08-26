@@ -8,17 +8,18 @@
       <ul>Front End
         <ul>Application Icon</ul>
         <ul><s>Button Grid</s></ul>
-        <ul>Ball Icon</ul>
+        <ul><s>Ball Icon</s></ul>
+        <ul><s>Paddle Icon</s></ul>
         <ul><s>Paddle</s></ul>
         <ul><s>Border</s></ul>
-        <ul>Bricks</ul>
+        <ul><s>Bricks</s></ul>
         <ul>Game Over Screen</ul>
       </ul>
       <ul>Gameplay
         <ul><s>Player Controls / Paddle</s></ul>
         <ul><s>Wall Collision</s></ul>
-        <ul>Brick Collision</ul>
-        <ul>Paddle Collision</ul>
+        <ul><s>Brick Collision</s></ul>
+        <ul><s>Paddle Collision</s></ul>
         <ul>Points</ul>
         <ul>Main Game Loop
         <ul>Game over</ul>
