@@ -280,7 +280,7 @@
             this.button254 = new System.Windows.Forms.Button();
             this.button255 = new System.Windows.Forms.Button();
             this.button256 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.ScoreLabel = new System.Windows.Forms.Label();
             this.Gameboard.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -4132,14 +4132,15 @@
             this.button256.UseVisualStyleBackColor = false;
             this.button256.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Movement_KeyPress);
             // 
-            // label1
+            // ScoreLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(119, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "label1";
+            this.ScoreLabel.AutoSize = true;
+            this.ScoreLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ScoreLabel.Location = new System.Drawing.Point(155, 3);
+            this.ScoreLabel.Name = "ScoreLabel";
+            this.ScoreLabel.Size = new System.Drawing.Size(22, 25);
+            this.ScoreLabel.TabIndex = 1;
+            this.ScoreLabel.Text = "0";
             // 
             // Form1
             // 
@@ -4147,7 +4148,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(344, 361);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.ScoreLabel);
             this.Controls.Add(this.Gameboard);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -4416,6 +4417,6 @@
         private Button button254;
         private Button button255;
         private Button button256;
-        private Label label1;
+        private Label ScoreLabel;
     }
 }
