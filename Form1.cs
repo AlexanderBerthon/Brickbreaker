@@ -39,16 +39,18 @@ namespace Brickbreaker {
         //Global Variables :(
         int score;
         Random random = new Random();
-        Button[] btnArray;
-        Boolean gameOver;
-        Boolean skip;
+        Button[] btnArray; 
+        Boolean gameOver; //used to end the game / skip logic / load game over menu and final score menu
+        Boolean skip; //used for animation
+        int brickCount; //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
 
         Ball ball;
         Paddle paddle;
 
         //highscore class variable - NYI
-        System.Windows.Forms.Timer timer;
 
+        //TODO: rename these
+        System.Windows.Forms.Timer timer;
         System.Windows.Forms.Timer timer2;
 
         public Form1() {
@@ -77,40 +79,8 @@ namespace Brickbreaker {
             int[] brickIni = {19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60,
                   67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92};
 
-
-            brickPatternIni();
-           
-            /*
             //print bricks
-            for (int i = 17; i < 79; i++) {
-                if (i != 31 && i != 32 && i != 47 && i != 48 && i != 63 && i != 64) {
-                    int j = random.Next(0, 6);
-                    if (j >3) {
-                    btnArray[i].Tag = "Brick";
-                    switch (j) {
-                        case 0:
-                            btnArray[i].BackColor = Color.Red;
-                            break;
-                        case 1:
-                            btnArray[i].BackColor = Color.Blue;
-                            break;
-                        case 2:
-                            btnArray[i].BackColor = Color.Green;
-                            break;
-                        case 3:
-                            btnArray[i].BackColor = Color.Purple;
-                            break;
-                        case 4:
-                            btnArray[i].BackColor = Color.Yellow;
-                            break;
-                        case 5:
-                            btnArray[i].BackColor = Color.Orange;
-                            break;
-                    }
-                    }
-                }
-            }
-            */
+            brickPatternIni();
 
             //speed
             timer.Interval = 200;
@@ -509,6 +479,12 @@ namespace Brickbreaker {
                 }
                 btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb; //redraw ball
                 ScoreLabel.Text = ""+score;
+
+                if(brickCount == 0) {
+                    //load next level
+                    //nextLevel()
+                }
+
             }
             else {
                 Application.Exit();
@@ -553,45 +529,75 @@ namespace Brickbreaker {
             else if (e.KeyChar == 'd' && paddle.getIndex() < 220) {
                 paddle.queueMove(1);
             }
-            
         }
 
+        //can this code be improved?
+        //it is only run 1 time, and all of these variables are declared in a small scope, so.. it should be ok?
         private void brickPatternIni() {
-            int choice = random.Next(0, 8);
-            int brickPattern;
-            
+            int choice = random.Next(0, 7);
+            List<int> brickPattern = new List<int>();
+
+            int[] pattern1 = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+            int[] pattern2 = { 18, 19, 22, 23, 24, 25, 28, 29, 66, 67, 70, 71, 72, 73, 76, 77, 82, 83, 86, 87, 88, 89, 92, 93 };
+            int[] pattern3 = { 20, 27, 35, 36, 37, 42, 43, 44, 50, 51, 52, 53, 54, 57, 58, 59, 60, 61, 67, 68, 69, 74, 75, 76, 84, 91 };
+            int[] pattern4 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94};
+            int[] pattern5 = { 18, 20, 22, 24, 26, 28, 35, 38, 41, 44, 51, 54, 57, 60, 67, 70, 76, 76, 83, 85, 87, 89, 91, 93 };
+            int[] pattern6 = { 19, 20, 23, 34, 27, 28, 33, 34, 37, 38, 41, 42, 45, 46, 51, 52, 55, 56, 59, 60, 65, 66, 69, 70, 73, 74, 77, 78, 83, 84, 87, 88, 91, 92 };
+            int[] pattern7 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94 };
+
             switch (choice) {
                 case 0:
-                    brickPattern[] = {19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92};
+                    brickPattern.AddRange(pattern1);
                     break;
                 case 1:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern2);
                     break;
                 case 2:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern3);
                     break;
                 case 3:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern4);
                     break;
                 case 4:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern5);
                     break;
                 case 5:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern6);
                     break;
                 case 6:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
-                    break;
-                case 7:
-                    int[] brickPattern = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
+                    brickPattern.AddRange(pattern7);
                     break;
             }
-
 
             for (int i = 0; i < brickPattern.Count(); i++) {
                 btnArray[brickPattern[i]].Tag = "Brick";
-                btnArray[brickPattern[i]].BackColor = Color.OldLace;
+                btnArray[brickPattern[i]].BackColor = Color.DodgerBlue;
+                brickCount++;
             }
+        }
+
+        private void nextLevel() {
+
+
+        }
+
+        private void gameOverMenu() {
+            //if highscore, load highscore menu
+            //screen user input
+            //if good, add to highscore sheet
+            
+            //close highscore menu
+
+            //load game over menu
+            //display highscores
+            //button to exit
+            //button to restart
+            //restart()
+
+        }
+
+        private void restart() {
+
         }
 
     }
@@ -679,10 +685,6 @@ Version Seven
 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95
 
 { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94}
-
-
-
-
 */
 
 
