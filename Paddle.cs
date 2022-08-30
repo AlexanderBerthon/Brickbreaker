@@ -36,6 +36,5 @@ namespace Brickbreaker {
             nextMove = 0;
         }
 
-
     }
 }
