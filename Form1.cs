@@ -487,7 +487,8 @@ namespace Brickbreaker {
 
             }
             else {
-                Application.Exit();
+                restart(); //testing
+                //Application.Exit();
                 //gameOver() //display gameover menu / highscore / etc. 
             }
         }
@@ -582,10 +583,13 @@ namespace Brickbreaker {
         }
 
         private void gameOverMenu() {
+            timer.Stop();
+            timer2.Stop();
+
             //if highscore, load highscore menu
             //screen user input
             //if good, add to highscore sheet
-            
+
             //close highscore menu
 
             //load game over menu
@@ -597,7 +601,31 @@ namespace Brickbreaker {
         }
 
         private void restart() {
+            timer.Stop();
+            timer2.Stop();
+            score = 0;
 
+            foreach (Button btn in btnArray) {
+                if (btn.Tag != "Left Border" && btn.Tag != "Right Border" && btn.Tag != "Top Border" && btn.Tag != "Bottom Border") {
+                    btn.Tag = "";
+                    btn.BackgroundImage = null;
+                    btn.BackColor = Color.Black;
+                }
+            }
+
+            random = new Random();
+            ball = new Ball(); //what happens to the original? 
+            paddle = new Paddle(); //what happens to the original
+            btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex()].Tag = "Paddle 1";
+            btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+            btnArray[paddle.getIndex() + 2].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+            brickPatternIni();
+            gameOver = false;
+            timer.Start();
+            timer2.Start();
         }
 
     }
