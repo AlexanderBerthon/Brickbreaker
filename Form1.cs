@@ -1,26 +1,5 @@
 namespace Brickbreaker {
     /// <summary>
-    /// 
-    /// game can be a little predictable and cheeseable by abusing left/right paddle collision and predictable movement
-    /// 
-    /// ways to make the game more interesting / less predictable
-    /// 
-    /// 1) space out the blocks, if you allow gaps for the ball to go through, it can lead to less predictable
-    /// behavior and chains
-    /// 
-    /// 2) indestructible blocks, creates some extra bounces / chaining possibilities
-    /// 
-    /// 3) guards, moving ai paddles that interfere with normal block destruction
-    /// 
-    /// 4) moving blocks, if all the blocks moved around that would certainly make it more random. even if
-    /// you could make a line of blocks that just went left and looped around the other side infinitely.
-    /// 
-    /// 5) any combination of above
-    /// 
-    /// 6) powers, after a certain number of paddle hits, either spawn a power up to catch or give the power
-    /// direct to the player and have spacebar activate it or something. something that can get those
-    /// annoying little pieces that take forever to get naturally. like the top left or right pieces
-    /// 
     /// Question:
     /// rather than literally hard coding every single collision into a logic statement
     /// is there a way to write it where the logic holds in a variety of situations without needing to be singled out? 
@@ -32,6 +11,15 @@ namespace Brickbreaker {
     /// I feel like i am duplicating a lot of code.
     /// 
     /// Still testing skip / pauses where the ball collides and changes directions multiple times in the same tick. Should I skip a tick to convey multiple direction changes?
+    /// 
+    /// Some bugs:
+    /// bottom left border/paddle collision is broken. the ball teleports to the right border halfway up for some reason? 
+    /// trajectory changes from +15 --> -17
+    /// 
+    /// top right corner ball teleports
+    /// top left corner ball teleports
+    /// 
+    /// assuming bottom right border/paddle collision has a similar issue
     /// 
     /// </summary>
 
@@ -107,7 +95,7 @@ namespace Brickbreaker {
                         |()     ->  | /      
                         |---        |---
                         */
-                        ball.leftPaddleCollision();
+                        ball.rightPaddleCollision(); //bad name
                     }
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                         /*
@@ -170,7 +158,7 @@ namespace Brickbreaker {
                          ()|  ->    \ |     
                         ---|       ---|
                         */
-                        ball.leftPaddleCollision();
+                        ball.leftPaddleCollision(); //bad name
                     }
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                         /*
@@ -355,7 +343,7 @@ namespace Brickbreaker {
                         score++;
                     }
                 }
-               //down right brick collision
+                //down right brick collision
                 else if (ball.getTrajectory() == + 17 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
                     btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() + 1].Tag = "";
@@ -441,7 +429,11 @@ namespace Brickbreaker {
                         /                  ()
                     */
                     ball.topBorderCollision();
-                    if(btnArray[ball.nextMove()].Tag == "Brick") {
+                    //this is terrible but I think it will work xd
+                    if(btnArray[ball.nextMove()].Tag == "Top Border") {
+                        ball.topBorderCollision();
+                    }
+                    else if(btnArray[ball.nextMove()].Tag == "Brick") {
                         /*
                         --------         --------          ---------
                           ()  []   -->     ()  []    -->       /  []
@@ -542,8 +534,8 @@ namespace Brickbreaker {
             int[] pattern2 = { 18, 19, 22, 23, 24, 25, 28, 29, 66, 67, 70, 71, 72, 73, 76, 77, 82, 83, 86, 87, 88, 89, 92, 93 };
             int[] pattern3 = { 20, 27, 35, 36, 37, 42, 43, 44, 50, 51, 52, 53, 54, 57, 58, 59, 60, 61, 67, 68, 69, 74, 75, 76, 84, 91 };
             int[] pattern4 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94};
-            int[] pattern5 = { 18, 20, 22, 24, 26, 28, 35, 38, 41, 44, 51, 54, 57, 60, 67, 70, 76, 76, 83, 85, 87, 89, 91, 93 };
-            int[] pattern6 = { 19, 20, 23, 34, 27, 28, 33, 34, 37, 38, 41, 42, 45, 46, 51, 52, 55, 56, 59, 60, 65, 66, 69, 70, 73, 74, 77, 78, 83, 84, 87, 88, 91, 92 };
+            int[] pattern5 = { 18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93, 95 };
+            int[] pattern6 = { 19, 20, 23, 24, 27, 28, 33, 34, 37, 38, 41, 42, 45, 46, 51, 52, 55, 56, 59, 60, 65, 66, 69, 70, 73, 74, 77, 78, 83, 84, 87, 88, 91, 92 };
             int[] pattern7 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94 };
 
             switch (choice) {
@@ -686,13 +678,14 @@ Version Four
 
 Version Five
 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
-16    18    20    22    24    26    28       31
-32       35       38       41       44       47
-48       51       54       57       60       63
-64       67       70       73       76       79
-80       83    85    87    89    91    93    95
+16    18    20 21    23 24    26 27    29    31
+32 33    35       38       41       44    46 47
+48 49    51       54       57       60    62 63
+64 65    67       70       73       76    78 79
+80    82    84 85    87 88    90 91    93    95
 
-{18, 20, 22, 24, 26, 28, 35, 38, 41, 44, 51, 54, 57, 60, 67, 70, 76, 76, 83, 85, 87, 89, 91, 93}
+{18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93, 95}
+
 
 Version Six
 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
@@ -713,6 +706,6 @@ Version Seven
 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95
 
 { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94}
-*/
+ */
 
 
