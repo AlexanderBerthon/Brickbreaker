@@ -25,7 +25,7 @@
         <ul>Game over</ul>
         <ul>Win condition</ul>
         <ul><s>Game tick</s></ul>
-        <ul>Restart</ul>
+        <ul><s>Restart</s></ul>
         </ul>
         Testing
         </ul>
