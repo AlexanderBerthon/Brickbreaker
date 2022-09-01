@@ -99,6 +99,38 @@ namespace Brickbreaker {
             }
         }
 
+        //can I just simplify all of these into 2 functions?
+        //either reverse or deflect
+        public void reverse() {
+            if (trajectory == 15) {
+                trajectory = -15;
+            }
+            else if (trajectory == 17) {
+                trajectory = -17;
+            }
+            else if (trajectory == -15) {
+                trajectory = 15;
+            }
+            else if (trajectory == -17) {
+                trajectory = 17;
+            }
+        }
+
+        public void deflect() {
+            if (trajectory == 15) {
+                trajectory = 17;
+            }
+            else if (trajectory == 17) {
+                trajectory = 15;
+            }
+            else if (trajectory == -15) {
+                trajectory = -17;
+            }
+            else if (trajectory == -17) {
+                trajectory = -15;
+            }
+        }
+
         public void topBorderCollision() {
             //invert trajectory and scramble direction?
             //this works unless it hits the top at the top left corner or top right corner, then it will have weird behavior. might need a check for that
