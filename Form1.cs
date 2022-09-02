@@ -21,6 +21,7 @@ namespace Brickbreaker {
     /// 
     /// assuming bottom right border/paddle collision has a similar issue
     /// 
+    /// 
     /// </summary>
 
     public partial class Form1 : Form {
