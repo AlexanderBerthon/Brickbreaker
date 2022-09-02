@@ -38,8 +38,8 @@ namespace Brickbreaker {
         //highscore class variable - NYI
 
         //TODO: rename these
-        System.Windows.Forms.Timer timer;
-        System.Windows.Forms.Timer timer2;
+        System.Windows.Forms.Timer ballTimer;
+        System.Windows.Forms.Timer paddleTimer;
 
         public Form1() {
             InitializeComponent();
@@ -51,8 +51,8 @@ namespace Brickbreaker {
             ball = new Ball();
             paddle = new Paddle();
 
-            timer = new System.Windows.Forms.Timer();
-            timer2 = new System.Windows.Forms.Timer();
+            ballTimer = new System.Windows.Forms.Timer();
+            paddleTimer = new System.Windows.Forms.Timer();
 
             //215, 216, 217
             //[index] [ += 1 ] [ += 2 ]
@@ -71,15 +71,15 @@ namespace Brickbreaker {
             brickPatternIni();
 
             //speed
-            timer.Interval = 500;
-            timer.Tick += new EventHandler(TimerEventProcessor);
+            ballTimer.Interval = 500;
+            ballTimer.Tick += new EventHandler(TimerEventProcessor);
 
-            timer2.Interval = 200;
-            timer2.Tick += new EventHandler(TimerEventProcessor2);
+            paddleTimer.Interval = 200;
+            paddleTimer.Tick += new EventHandler(TimerEventProcessor2);
 
             //start
-            timer.Start();
-            timer2.Start();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
         //ball timer
@@ -268,9 +268,9 @@ namespace Brickbreaker {
                         [][]()    ->  []  \
                               \            ()
                         */
-                        ball.reverse();
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
+                        ball.reverse();
                     }
                     else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
                         /*
@@ -278,15 +278,15 @@ namespace Brickbreaker {
                           [][]()     ->   []  \
                                 \              ()
                         */
-                        ball.reverse();
                         btnArray[ball.getIndex() - 15].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 15].Tag = "";
+                        ball.reverse();
                     }
                     else {
                         /*
-                        []  []        [] 
-                        [][]()    ->  []   \
-                              \             ()
+                        ________      ______
+                        [][]()    ->  []  \ 
+                              \            ()
                         */
                         if(btnArray[ball.nextMove()].Tag == "Top Border") {
                             ball.reverse();
@@ -313,6 +313,11 @@ namespace Brickbreaker {
                     btnArray[ball.getIndex() - 16].Tag = "";
                     ball.deflectVertical();
                     score++;
+                    //testing
+                    if(btnArray[ball.getIndex() + 15].Tag == "Brick" || btnArray[ball.getIndex() + 17].Tag == "Brick" ||
+                        btnArray[ball.getIndex() + 1].Tag == "Brick" || btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                        skip = true;
+                    }
                 }
 
                 //down left brick collision
@@ -581,13 +586,34 @@ namespace Brickbreaker {
         }
 
         private void nextLevel() {
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
+            foreach (Button btn in btnArray) {
+                if (btn.Tag != "Left Border" && btn.Tag != "Right Border" && btn.Tag != "Top Border" && btn.Tag != "Bottom Border") {
+                    btn.Tag = "";
+                    btn.BackgroundImage = null;
+                    btn.BackColor = Color.Black;
+                }
+            }
 
+            random = new Random();
+            ball = new Ball(); //what happens to the original? 
+            paddle = new Paddle(); //what happens to the original
+            btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex()].Tag = "Paddle 1";
+            btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+            btnArray[paddle.getIndex() + 2].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+            brickPatternIni();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
         private void gameOverMenu() {
-            timer.Stop();
-            timer2.Stop();
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
             //if highscore, load highscore menu
             //screen user input
@@ -604,8 +630,8 @@ namespace Brickbreaker {
         }
 
         private void restart() {
-            timer.Stop();
-            timer2.Stop();
+            ballTimer.Stop();
+            paddleTimer.Stop();
             score = 0;
 
             foreach (Button btn in btnArray) {
@@ -627,8 +653,8 @@ namespace Brickbreaker {
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
             brickPatternIni();
             gameOver = false;
-            timer.Start();
-            timer2.Start();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
     }
