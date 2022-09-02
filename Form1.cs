@@ -38,8 +38,8 @@ namespace Brickbreaker {
         //highscore class variable - NYI
 
         //TODO: rename these
-        System.Windows.Forms.Timer timer;
-        System.Windows.Forms.Timer timer2;
+        System.Windows.Forms.Timer ballTimer;
+        System.Windows.Forms.Timer paddleTimer;
 
         public Form1() {
             InitializeComponent();
@@ -51,8 +51,8 @@ namespace Brickbreaker {
             ball = new Ball();
             paddle = new Paddle();
 
-            timer = new System.Windows.Forms.Timer();
-            timer2 = new System.Windows.Forms.Timer();
+            ballTimer = new System.Windows.Forms.Timer();
+            paddleTimer = new System.Windows.Forms.Timer();
 
             //215, 216, 217
             //[index] [ += 1 ] [ += 2 ]
@@ -71,15 +71,15 @@ namespace Brickbreaker {
             brickPatternIni();
 
             //speed
-            timer.Interval = 200;
-            timer.Tick += new EventHandler(TimerEventProcessor);
+            ballTimer.Interval = 500;
+            ballTimer.Tick += new EventHandler(TimerEventProcessor);
 
-            timer2.Interval = 150;
-            timer2.Tick += new EventHandler(TimerEventProcessor2);
+            paddleTimer.Interval = 200;
+            paddleTimer.Tick += new EventHandler(TimerEventProcessor2);
 
             //start
-            timer.Start();
-            timer2.Start();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
         //ball timer
@@ -95,7 +95,7 @@ namespace Brickbreaker {
                         |()     ->  | /      
                         |---        |---
                         */
-                        ball.rightPaddleCollision(); //bad name
+                        ball.reverse();
                     }
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                         /*
@@ -105,7 +105,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 16].Tag = "";
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
@@ -116,7 +116,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() + 16].Tag = "";
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
@@ -127,7 +127,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 15].Tag = "";
                         btnArray[ball.getIndex() - 15].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() + 17].Tag == "Brick") {
@@ -138,7 +138,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() + 17].Tag = "";
                         btnArray[ball.getIndex() + 17].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else {
@@ -147,7 +147,7 @@ namespace Brickbreaker {
                         |()    ->    | /      ||      |()    ->    | \
                         |  \         |                |            |  ()
                         */
-                        ball.leftBorderCollision();
+                        ball.deflectHorizontal();
                     }
                 }
                 //logic for right border collisions
@@ -158,7 +158,7 @@ namespace Brickbreaker {
                          ()|  ->    \ |     
                         ---|       ---|
                         */
-                        ball.leftPaddleCollision(); //bad name
+                        ball.reverse();
                     }
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                         /*
@@ -168,7 +168,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 16].Tag = "";
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
@@ -179,7 +179,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() + 16].Tag = "";
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() - 17].Tag == "Brick") {
@@ -190,7 +190,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 17].Tag = "";
                         btnArray[ball.getIndex() - 17].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else if (btnArray[ball.getIndex() + 15].Tag == "Brick") {
@@ -201,7 +201,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() + 15].Tag = "";
                         btnArray[ball.getIndex() + 15].BackColor = Color.Black;
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
                     else {
@@ -210,7 +210,7 @@ namespace Brickbreaker {
                           ()|   ->       \ |     ||      ()|     ->     / |  
                          /  |              |               |          ()  |
                         */
-                        ball.rightBorderCollision();
+                        ball.deflectHorizontal();
                     }
                 }
                 //up right brick collision
@@ -223,7 +223,7 @@ namespace Brickbreaker {
                          ()[][]  ->     /  []
                         /             ()
                         */
-                        ball.brickCollision();
+                        ball.reverse();
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
                         score++;
@@ -236,20 +236,25 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
-                        ball.brickCollision();
+                        ball.reverse();
                         score++;
                     }
-                    else {//TODO:Fix diagram if testing goes well
+                    else {
                         /*
-                                []            []
+                            []  []            []
                             ()[][]  ->     /  []
                            /             ()
                         */
                         if(btnArray[ball.nextMove()].Tag == "Top Border") {
-                            ball.brickCollision();
+                            ball.reverse();
                         }
+                        /*
+                                []        ()  []
+                            ()[][]  ->      \ []
+                           /              
+                        */
                         else {
-                            ball.rightBorderCollision();
+                            ball.deflectHorizontal();
                         }
                     }
                 }
@@ -263,9 +268,9 @@ namespace Brickbreaker {
                         [][]()    ->  []  \
                               \            ()
                         */
-                        ball.brickCollision();
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
+                        ball.reverse();
                     }
                     else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
                         /*
@@ -273,21 +278,26 @@ namespace Brickbreaker {
                           [][]()     ->   []  \
                                 \              ()
                         */
-                        ball.brickCollision();
                         btnArray[ball.getIndex() - 15].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 15].Tag = "";
+                        ball.reverse();
                     }
-                    else {//TODO:Fix diagram if testing goes well
+                    else {
                         /*
-                        []            []
-                        [][]()    ->  []   \
-                              \             ()
+                        ________      ______
+                        [][]()    ->  []  \ 
+                              \            ()
                         */
                         if(btnArray[ball.nextMove()].Tag == "Top Border") {
-                            ball.brickCollision();
+                            ball.reverse();
                         }
+                        /*
+                        []            []  ()
+                        [][]()    ->  [] /   
+                              \            
+                        */
                         else {
-                            ball.leftBorderCollision();
+                            ball.deflectHorizontal();
                         }
                     }
                 }
@@ -301,8 +311,13 @@ namespace Brickbreaker {
                     */
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
-                    ball.topBorderCollision();
+                    ball.deflectVertical();
                     score++;
+                    //testing
+                    if(btnArray[ball.getIndex() + 15].Tag == "Brick" || btnArray[ball.getIndex() + 17].Tag == "Brick" ||
+                        btnArray[ball.getIndex() + 1].Tag == "Brick" || btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                        skip = true;
+                    }
                 }
 
                 //down left brick collision
@@ -315,7 +330,7 @@ namespace Brickbreaker {
                         []()      ->     /
                           []            
                         */
-                        ball.brickCollision();
+                        ball.reverse();
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 16].Tag = "";
                         score++;
@@ -326,7 +341,7 @@ namespace Brickbreaker {
                         []()      ->     /
                             []            
                         */
-                        ball.brickCollision();
+                        ball.reverse();
                         btnArray[ball.getIndex() + 17].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 17].Tag = "";
                         score++;
@@ -339,7 +354,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() - 1].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 1].Tag = "";
-                        ball.leftBorderCollision();
+                        ball.deflectHorizontal();
                         score++;
                     }
                 }
@@ -353,7 +368,7 @@ namespace Brickbreaker {
                             ()[]      ->    \ 
                             []            
                         */
-                        ball.brickCollision();
+                        ball.reverse();
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 16].Tag = "";
                         score++;
@@ -364,7 +379,7 @@ namespace Brickbreaker {
                             ()[]      ->    \ 
                           []            
                         */
-                        ball.brickCollision();
+                        ball.reverse();
                         btnArray[ball.getIndex() + 15].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 15].Tag = "";
                         score++;
@@ -377,7 +392,7 @@ namespace Brickbreaker {
                         */
                         btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 1].Tag = "";
-                        ball.rightBorderCollision();
+                        ball.deflectHorizontal();
                         score++;
                     }
                 }
@@ -390,17 +405,17 @@ namespace Brickbreaker {
                     */
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
-                    ball.brickCollision();
+                    ball.reverse();
                     score++;
                 }
                 //left edge paddle collision
-                else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") { 
+                else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") {
                     /*
                     
                        \            ()    
                         ()___   ->    \___            
                     */
-                    ball.leftPaddleCollision();
+                    ball.reverse();
                 }
                 //right edge paddle collision
                 else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
@@ -409,7 +424,7 @@ namespace Brickbreaker {
                              /          ()
                         ___()   ->  ___/            
                     */
-                    ball.rightPaddleCollision();
+                    ball.reverse();
                 }
                 //normal paddle collision
                 else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
@@ -420,7 +435,7 @@ namespace Brickbreaker {
                             ()   ->    / 
                             ---      ___
                     */
-                    ball.paddleCollision();
+                    ball.deflectVertical();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
                     /*
@@ -428,10 +443,11 @@ namespace Brickbreaker {
                          ()      ->       \ 
                         /                  ()
                     */
-                    ball.topBorderCollision();
-                    //this is terrible but I think it will work xd
-                    if(btnArray[ball.nextMove()].Tag == "Top Border") {
-                        ball.topBorderCollision();
+                    ball.deflectVertical();
+                    //this is terrible but I think it will work?
+                    //it doesnt
+                    if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                        ball.deflectVertical();
                     }
                     else if(btnArray[ball.nextMove()].Tag == "Brick") {
                         /*
@@ -444,14 +460,14 @@ namespace Brickbreaker {
                             btnArray[ball.nextMove()].BackColor = Color.Black;
                             score++;
                             skip = true;
-                            ball.leftBorderCollision();
+                            ball.reverse();
                         }
                         else if(ball.getTrajectory() == 17) {
                             btnArray[ball.nextMove()].Tag = "";
                             btnArray[ball.nextMove()].BackColor = Color.Black;
                             score++;
-                            skip = true; 
-                            ball.rightBorderCollision();
+                            skip = true;
+                            ball.reverse();
                         }
                     }                  
                 }
@@ -534,8 +550,8 @@ namespace Brickbreaker {
             int[] pattern2 = { 18, 19, 22, 23, 24, 25, 28, 29, 66, 67, 70, 71, 72, 73, 76, 77, 82, 83, 86, 87, 88, 89, 92, 93 };
             int[] pattern3 = { 20, 27, 35, 36, 37, 42, 43, 44, 50, 51, 52, 53, 54, 57, 58, 59, 60, 61, 67, 68, 69, 74, 75, 76, 84, 91 };
             int[] pattern4 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94};
-            int[] pattern5 = { 18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93, 95 };
-            int[] pattern6 = { 19, 20, 23, 24, 27, 28, 33, 34, 37, 38, 41, 42, 45, 46, 51, 52, 55, 56, 59, 60, 65, 66, 69, 70, 73, 74, 77, 78, 83, 84, 87, 88, 91, 92 };
+            int[] pattern5 = { 18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93 };
+            int[] pattern6 = { 19, 20, 27, 28, 37, 38, 41, 42, 55, 56, 69, 70, 73, 74, 83, 84, 91, 92 };
             int[] pattern7 = { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94 };
 
             switch (choice) {
@@ -570,13 +586,34 @@ namespace Brickbreaker {
         }
 
         private void nextLevel() {
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
+            foreach (Button btn in btnArray) {
+                if (btn.Tag != "Left Border" && btn.Tag != "Right Border" && btn.Tag != "Top Border" && btn.Tag != "Bottom Border") {
+                    btn.Tag = "";
+                    btn.BackgroundImage = null;
+                    btn.BackColor = Color.Black;
+                }
+            }
 
+            random = new Random();
+            ball = new Ball(); //what happens to the original? 
+            paddle = new Paddle(); //what happens to the original
+            btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex()].Tag = "Paddle 1";
+            btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 1].Tag = "Paddle 2";
+            btnArray[paddle.getIndex() + 2].BackgroundImage = Properties.Resources.Paddle;
+            btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
+            brickPatternIni();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
         private void gameOverMenu() {
-            timer.Stop();
-            timer2.Stop();
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
             //if highscore, load highscore menu
             //screen user input
@@ -593,8 +630,8 @@ namespace Brickbreaker {
         }
 
         private void restart() {
-            timer.Stop();
-            timer2.Stop();
+            ballTimer.Stop();
+            paddleTimer.Stop();
             score = 0;
 
             foreach (Button btn in btnArray) {
@@ -616,8 +653,8 @@ namespace Brickbreaker {
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
             brickPatternIni();
             gameOver = false;
-            timer.Start();
-            timer2.Start();
+            ballTimer.Start();
+            paddleTimer.Start();
         }
 
     }
@@ -684,18 +721,18 @@ Version Five
 64 65    67       70       73       76    78 79
 80    82    84 85    87 88    90 91    93    95
 
-{18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93, 95}
+{18, 20, 21, 23, 24, 26, 27, 29, 33, 35, 38, 41, 44, 46, 49, 51, 54, 57, 60, 62, 65, 67, 70, 73, 76, 78, 82, 84, 85, 87, 88, 90, 91, 93}
 
 
 Version Six
 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
-16       19 20       23 24       27 28       31
-32 33 34       37 38       41 42       45 46 47
-48       51 52       55 56       59 60       63
-64 65 66       69 70       73 74       77 78 79
-80       83 84       87 88      91 92        95
+16       19 20                   27 28       31
+32             37 38       41 42             47
+48                   55 56                   63
+64             69 70       73 74             79
+80       83 84                  91 92        95
 
-{19, 20, 23, 34, 27, 28, 33, 34, 37, 38, 41, 42, 45, 46, 51, 52, 55, 56, 59, 60, 65, 66, 69, 70, 73, 74, 77, 78, 83, 84, 87, 88, 91, 92}
+{19, 20, 27, 28, 37, 38, 41, 42, 55, 56, 69, 70, 73, 74, 83, 84, 91, 92}
 
 Version Seven
 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15

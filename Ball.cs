@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace Brickbreaker {
 
-    //logic for ball and physics interactions
-
     internal class Ball {
         private Random random;
         private int currentIndex;
@@ -28,88 +26,69 @@ namespace Brickbreaker {
             random = new Random();
         }
 
+        //moves the ball
         public void update() {
             currentIndex += trajectory;
         }
 
+        //return current trajectory
         public int getTrajectory() {
             return trajectory;
         }
 
-        //returns the next index the ball will arrive at given the current position and trajectory. Used to trigger collisions
+        //returns the next index the ball WILL arrive at given the current position and trajectory. Used to check for collisions
         public int nextMove() {
             return currentIndex + trajectory;
         }
 
-        //change the name, only called when the ball hits a brick from the top // not when the ball collides with the bottom border
-        public void bottomBorderCollision() {
-            if (trajectory == +15) {
-                trajectory = -17;
-            }
-            else if (trajectory == +17) {
+        //reverse current trajectory
+        public void reverse() {
+            if (trajectory == 15) {
                 trajectory = -15;
             }
-        }
-
-        public void leftBorderCollision() {
-            if (trajectory > 0) {
-                trajectory = 17;
-            }
-            else {
-                trajectory = -15;
-            }
-        }
-
-        public void rightBorderCollision() {
-            if (trajectory > 0) {
-                trajectory = 15;
-            }
-            else {
+            else if (trajectory == 17) {
                 trajectory = -17;
-            }
-        }
-
-        public void leftPaddleCollision() {
-            trajectory = -17;
-        }
-        public void rightPaddleCollision() {
-            trajectory = -15;
-        }
-        public void paddleCollision() {
-            if (trajectory == 17) {
-                trajectory = -15;
-            }
-            else {
-                trajectory = -17;
-            }
-        }
-
-        public void brickCollision() {
-            if (trajectory == -17) {
-                trajectory = 17;
             }
             else if (trajectory == -15) {
                 trajectory = 15;
             }
-            else if (trajectory == 15) {
-                trajectory = -15;
-            }
-            else if(trajectory == 17) {
-                trajectory = -17;
+            else if (trajectory == -17) {
+                trajectory = 17;
             }
         }
 
-        public void topBorderCollision() {
-            //invert trajectory and scramble direction?
-            //this works unless it hits the top at the top left corner or top right corner, then it will have weird behavior. might need a check for that
-            if(trajectory == -15) {
+        //bounce/redirect current trajectory. Mainly used for brick and left/right border collisions
+        public void deflectHorizontal() {
+            if (trajectory == 15) {
                 trajectory = 17;
             }
-            else if(trajectory == -17){
+            else if (trajectory == 17) {
                 trajectory = 15;
             }
-            else {
-                if(random.Next(0, 2)==0){
+            else if (trajectory == -15) {
+                trajectory = -17;
+            }
+            else if (trajectory == -17) {
+                trajectory = -15;
+            }
+        }
+
+        //bounce/redirect current trajectory. Mainly used for paddle and top border collisions
+        public void deflectVertical() {
+            if (trajectory == 17) {
+                trajectory = -15;
+            }
+            else if (trajectory  == 15) {
+                trajectory = -17;
+            }
+            else if (trajectory == -17) {
+                trajectory = 15;
+            }
+            else if (trajectory == -15) {
+                trajectory = 17;
+            }
+            else if (trajectory == -16) {
+                if(random.Next(0,2) == 0) {
                     trajectory = 15;
                 }
                 else {
@@ -118,6 +97,7 @@ namespace Brickbreaker {
             }
         }
 
+        //return current position/index
         public int getIndex() {
             return currentIndex;
         }
