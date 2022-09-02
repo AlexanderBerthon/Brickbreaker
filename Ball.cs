@@ -41,66 +41,6 @@ namespace Brickbreaker {
             return currentIndex + trajectory;
         }
 
-        //change the name, only called when the ball hits a brick from the top // not when the ball collides with the bottom border
-        public void bottomBorderCollision() {
-            if (trajectory == +15) {
-                trajectory = -17;
-            }
-            else if (trajectory == +17) {
-                trajectory = -15;
-            }
-        }
-
-        public void leftBorderCollision() {
-            if (trajectory > 0) {
-                trajectory = 17;
-            }
-            else {
-                trajectory = -15;
-            }
-        }
-
-        public void rightBorderCollision() {
-            if (trajectory > 0) {
-                trajectory = 15;
-            }
-            else {
-                trajectory = -17;
-            }
-        }
-
-        public void leftPaddleCollision() {
-            trajectory = -17;
-        }
-        public void rightPaddleCollision() {
-            trajectory = -15;
-        }
-        public void paddleCollision() {
-            if (trajectory == 17) {
-                trajectory = -15;
-            }
-            else {
-                trajectory = -17;
-            }
-        }
-
-        public void brickCollision() {
-            if (trajectory == -17) {
-                trajectory = 17;
-            }
-            else if (trajectory == -15) {
-                trajectory = 15;
-            }
-            else if (trajectory == 15) {
-                trajectory = -15;
-            }
-            else if(trajectory == 17) {
-                trajectory = -17;
-            }
-        }
-
-        //can I just simplify all of these into 2 functions?
-        //either reverse or deflect
         public void reverse() {
             if (trajectory == 15) {
                 trajectory = -15;
@@ -116,7 +56,7 @@ namespace Brickbreaker {
             }
         }
 
-        public void deflect() {
+        public void deflectHorizontal() {
             if (trajectory == 15) {
                 trajectory = 17;
             }
@@ -131,22 +71,18 @@ namespace Brickbreaker {
             }
         }
 
-        public void topBorderCollision() {
-            //invert trajectory and scramble direction?
-            //this works unless it hits the top at the top left corner or top right corner, then it will have weird behavior. might need a check for that
-            if(trajectory == -15) {
-                trajectory = 17;
+        public void deflectVertical() {
+            if (trajectory == 17) {
+                trajectory = -15;
             }
-            else if(trajectory == -17){
+            else if (trajectory  == 15) {
+                trajectory = -17;
+            }
+            else if (trajectory == -17) {
                 trajectory = 15;
             }
-            else {
-                if(random.Next(0, 2)==0){
-                    trajectory = 15;
-                }
-                else {
-                    trajectory = 17;
-                }
+            else if (trajectory == -15) {
+                trajectory = 17;
             }
         }
 
