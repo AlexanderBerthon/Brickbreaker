@@ -21,7 +21,7 @@ namespace Brickbreaker {
 
 
         public Ball() {
-            currentIndex = 167;
+            currentIndex = 171;
             trajectory = +15;
             random = new Random();
         }
