@@ -21,13 +21,13 @@ namespace Brickbreaker {
 
 
         public Ball() {
-            currentIndex = 199;
-            trajectory = -16;
+            currentIndex = 167;
+            trajectory = +15;
             random = new Random();
         }
 
         //moves the ball
-        public void update() {
+        public void move() {
             currentIndex += trajectory;
         }
 
