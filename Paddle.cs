@@ -17,7 +17,7 @@ namespace Brickbreaker {
         }
 
         //moves the paddle
-        public void update() {
+        public void move() {
             index += nextMove;            
         }
 

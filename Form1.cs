@@ -1,25 +1,17 @@
 namespace Brickbreaker {
     /// <summary>
-    /// Question:
-    /// rather than literally hard coding every single collision into a logic statement
-    /// is there a way to write it where the logic holds in a variety of situations without needing to be singled out? 
-    /// ... I don't think so
-    /// it just seems so.. amature-ish to write the logic this way.
     /// 
+    /// to skip or not to skip...
     /// 
-    /// should everything be based on the balls next move?
-    /// I feel like i am duplicating a lot of code.
-    /// 
-    /// Still testing skip / pauses where the ball collides and changes directions multiple times in the same tick. Should I skip a tick to convey multiple direction changes?
-    /// 
-    /// Some bugs:
-    /// bottom left border/paddle collision is broken. the ball teleports to the right border halfway up for some reason? 
-    /// trajectory changes from +15 --> -17
-    /// 
-    /// top right corner ball teleports
-    /// top left corner ball teleports
-    /// 
-    /// assuming bottom right border/paddle collision has a similar issue
+    /// logic is good 
+    /// can I optimize even more and remove the pause?
+    /// could loop the logic to process all collisions before moving the ball
+    /// but
+    /// if I do that, the graphics will all be updated at the same time
+    /// so bricks will just be popping out of existance all at once, might be hard to understand why from the users perspective
+    /// the other option is to put all movement on a pause/delay and increase the tick rate to match it
+    /// then you get the best of both worlds, but the clock tick will be super fast, not sure if this will affect performance
+    /// kind of a janky move I think
     /// 
     /// 
     /// </summary>
@@ -29,16 +21,15 @@ namespace Brickbreaker {
         int score;
         Random random = new Random();
         Button[] btnArray; 
-        Boolean gameOver; //used to end the game / skip logic / load game over menu and final score menu
-        Boolean skip; //used for animation
-        int brickCount; //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
+        Boolean gameOver;   //used to end the game / skip logic / load game over menu and final score menu
+        Boolean skip;       //used colission processing
+        int brickCount;     //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
 
         Ball ball;
         Paddle paddle;
 
         //highscore class variable - NYI
 
-        //TODO: rename these
         System.Windows.Forms.Timer ballTimer;
         System.Windows.Forms.Timer paddleTimer;
 
@@ -64,15 +55,11 @@ namespace Brickbreaker {
             btnArray[paddle.getIndex() + 2].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
 
-            //print bricks test
-            int[] brickIni = {19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60,
-                  67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92};
-
             //print bricks
             brickPatternIni();
 
             //speed
-            ballTimer.Interval = 500;
+            ballTimer.Interval = 300;
             ballTimer.Tick += new EventHandler(TimerEventProcessor);
 
             paddleTimer.Interval = 200;
@@ -98,57 +85,14 @@ namespace Brickbreaker {
                         */
                         ball.reverse();
                     }
-                    else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        /*
-                        |[][][]      |  [][]    
-                        |()      ->  | \ 
-                        |  \         |  ()
-                        */
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
-                        /*
-                           |  /        | ()
-                           |()     ->  |/
-                           |[]         |
-                        */
-                        btnArray[ball.getIndex() + 16].Tag = "";
-                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
-                        /*
-                        |  [][]      |    []    
-                        |()      ->  | \ 
-                        |  \         |  ()
-                        */
-                        btnArray[ball.getIndex() - 15].Tag = "";
-                        btnArray[ball.getIndex() - 15].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 17].Tag == "Brick") {
-                        /*
-                           |  /         | ()   
-                           |()      ->  |/
-                           |  []        |
-                        */
-                        btnArray[ball.getIndex() + 17].Tag = "";
-                        btnArray[ball.getIndex() + 17].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
                     else {
                         /*
                         |            |  ()            |  /         |
-                        |()    ->    | /      ||      |()    ->    | \
+                        |()    ->    | /      or      |()    ->    | \
                         |  \         |                |            |  ()
                         */
                         ball.deflectHorizontal();
+                        skip = true; //pause to check for other collisions
                     }
                 }
                 //logic for right border collisions
@@ -161,241 +105,67 @@ namespace Brickbreaker {
                         */
                         ball.reverse();
                     }
-                    else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        /*
-                        [][][]|       [][]  |    
-                            ()|  ->       / |
-                           /  |         ()  |
-                        */
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
-                        /*
-                           \  |         ()  |    
-                            ()|  ->       \ |
-                        [][][]|       [][]  |
-                        */
-                        btnArray[ball.getIndex() + 16].Tag = "";
-                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() - 17].Tag == "Brick") {
-                        /*
-                        [][]  |       []    |    
-                            ()|  ->       / |
-                           /  |         ()  |
-                        */
-                        btnArray[ball.getIndex() - 17].Tag = "";
-                        btnArray[ball.getIndex() - 17].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 15].Tag == "Brick") {
-                        /*
-                           \  |         ()  |    
-                            ()|  ->       \ |
-                        [][]  |       []    |
-                        */
-                        btnArray[ball.getIndex() + 15].Tag = "";
-                        btnArray[ball.getIndex() + 15].BackColor = Color.Black;
-                        ball.reverse();
-                        score++;
-                    }
                     else {
                         /*
-                            |          ()  |            \  |              |
-                          ()|   ->       \ |     ||      ()|     ->     / |  
-                         /  |              |               |          ()  |
+                               |          ()  |            \  |              |
+                             ()|   ->       \ |     or      ()|     ->     / |  
+                            /  |              |               |          ()  |
                         */
                         ball.deflectHorizontal();
+                        skip = true;
                     }
                 }
-                //up right brick collision
-                else if (ball.getTrajectory() == -15 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() + 1].Tag = "";
-                    if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        /*
-                         [][][]          [][]
-                         ()[][]  ->     /  []
-                        /             ()
-                        */
-                        ball.reverse();
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() - 17].Tag == "Brick") {
-                        /*
-                          []    []            []
-                            ()[][]  ->     /  []
-                           /             ()
-                        */
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        ball.reverse();
-                        score++;
-                    }
-                    else {
-                        /*
-                            []  []            []
-                            ()[][]  ->     /  []
-                           /             ()
-                        */
-                        if(btnArray[ball.nextMove()].Tag == "Top Border") {
-                            ball.reverse();
-                        }
-                        /*
-                                []        ()  []
-                            ()[][]  ->      \ []
-                           /              
-                        */
-                        else {
-                            ball.deflectHorizontal();
-                        }
-                    }
-                }
-                //up left brick collision
-                else if (ball.getTrajectory() == -17 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                //left
+                else if (btnArray[ball.getIndex() - 1].Tag == "Brick") {
+                    /*
+                                         ()                /          
+                        []()    ->      /      or      []()    ->      \
+                            \                                           ()
+                    */
                     btnArray[ball.getIndex() - 1].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 1].Tag = "";
-                    if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
-                        /*                
-                        [][][]        [][]
-                        [][]()    ->  []  \
-                              \            ()
-                        */
-                        btnArray[ball.getIndex() - 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 16].Tag = "";
-                        ball.reverse();
-                    }
-                    else if (btnArray[ball.getIndex() - 15].Tag == "Brick") {
-                        /*
-                          []    []        []    
-                          [][]()     ->   []  \
-                                \              ()
-                        */
-                        btnArray[ball.getIndex() - 15].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 15].Tag = "";
-                        ball.reverse();
-                    }
-                    else {
-                        /*
-                        ________      ______
-                        [][]()    ->  []  \ 
-                              \            ()
-                        */
-                        if(btnArray[ball.nextMove()].Tag == "Top Border") {
-                            ball.reverse();
-                        }
-                        /*
-                        []            []  ()
-                        [][]()    ->  [] /   
-                              \            
-                        */
-                        else {
-                            ball.deflectHorizontal();
-                        }
-                    }
+                    ball.deflectHorizontal();
+                    skip = true;
+                    score++;
                 }
-                //single center brick collision (only one current use case, but keep for future needs)
-                //also note there is no logic for straight down collision either, must implement if that functionallity is ever needed
+                //right
+                else if (btnArray[ball.getIndex() + 1].Tag == "Brick") {
+                    /*
+                                           ()               \                   
+                             ()[]   ->       \       or      ()[]     ->     /    
+                            /                                              ()   
+                    */
+                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
+                    btnArray[ball.getIndex() + 1].Tag = "";
+                    ball.deflectHorizontal();
+                    skip = true;
+                    score++;
+                }
+                //top
                 else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                     /*
                         [][][]         []  []           []  []
-                          ()    -/>      /       -/>       \
-                          ||           ()                   ()
+                          ()     ->      /       or        \
+                                       ()                   ()
                     */
                     btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                     btnArray[ball.getIndex() - 16].Tag = "";
                     ball.deflectVertical();
+                    skip = true;
                     score++;
-                    //testing
-                    if(btnArray[ball.getIndex() + 15].Tag == "Brick" || btnArray[ball.getIndex() + 17].Tag == "Brick" ||
-                        btnArray[ball.getIndex() + 1].Tag == "Brick" || btnArray[ball.getIndex() - 1].Tag == "Brick") {
-                        skip = true;
-                    }
                 }
-
-                //down left brick collision
-                else if (ball.getTrajectory() == + 15 && btnArray[ball.getIndex() - 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() - 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() - 1].Tag = "";
-                    if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
-                        /*
-                        []  /         []  ()
-                        []()      ->     /
-                          []            
-                        */
-                        ball.reverse();
-                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() + 16].Tag = "";
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 17].Tag == "Brick") {
-                        /*
-                        []  /         []  ()
-                        []()      ->     /
-                            []            
-                        */
-                        ball.reverse();
-                        btnArray[ball.getIndex() + 17].BackColor = Color.Black;
-                        btnArray[ball.getIndex() + 17].Tag = "";
-                        score++;
-                    }
-                    else {
-                        /*
-                        []  /         []  
-                        []()      ->     \
-                                          ()
-                        */
-                        btnArray[ball.getIndex() - 1].BackColor = Color.Black;
-                        btnArray[ball.getIndex() - 1].Tag = "";
-                        ball.deflectHorizontal();
-                        score++;
-                    }
-                }
-                //down right brick collision
-                else if (ball.getTrajectory() == + 17 && btnArray[ball.getIndex() + 1].Tag == "Brick") {
-                    btnArray[ball.getIndex() + 1].BackColor = Color.Black;
-                    btnArray[ball.getIndex() + 1].Tag = "";
-                    if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
-                        /*
-                           \  []          ()  [] 
-                            ()[]      ->    \ 
-                            []            
-                        */
-                        ball.reverse();
-                        btnArray[ball.getIndex() + 16].BackColor = Color.Black;
-                        btnArray[ball.getIndex() + 16].Tag = "";
-                        score++;
-                    }
-                    else if (btnArray[ball.getIndex() + 15].Tag == "Brick") {
-                        /*
-                           \  []          ()  [] 
-                            ()[]      ->    \ 
-                          []            
-                        */
-                        ball.reverse();
-                        btnArray[ball.getIndex() + 15].BackColor = Color.Black;
-                        btnArray[ball.getIndex() + 15].Tag = "";
-                        score++;
-                    }
-                    else {
-                        /*
-                             \  []              [] 
-                              ()[]      ->     / 
-                                             ()
-                        */
-                        btnArray[ball.getIndex() + 1].BackColor = Color.Black;
-                        btnArray[ball.getIndex() + 1].Tag = "";
-                        ball.deflectHorizontal();
-                        score++;
-                    }
+                //bottom
+                else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
+                    /*
+                                          ()           ()  
+                          ()     ->      /       or      \
+                        [][][]        []  []           []  []
+                    */
+                    btnArray[ball.getIndex() + 16].BackColor = Color.Black;
+                    btnArray[ball.getIndex() + 16].Tag = "";
+                    ball.deflectVertical();
+                    skip = true;
+                    score++;
                 }
                 //diagonal collision ~ logic holds for all 4 diagonal collisions
                 else if (btnArray[ball.nextMove()].Tag == "Brick") {
@@ -407,8 +177,10 @@ namespace Brickbreaker {
                     btnArray[ball.nextMove()].BackColor = Color.Black;
                     btnArray[ball.nextMove()].Tag = "";
                     ball.reverse();
+                    skip = true;
                     score++;
                 }
+                //not sure if I can simplify these..
                 //left edge paddle collision
                 else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") {
                     /*
@@ -439,38 +211,24 @@ namespace Brickbreaker {
                     ball.deflectVertical();
                 }
                 else if (btnArray[ball.nextMove()].Tag == "Top Border") {
-                    /*
+                    if(btnArray[ball.getIndex() - 1].Tag == "Left Border" || btnArray[ball.getIndex() + 1].Tag == "Right Border") {
+                       /*
+                        ____         ____
+                       |()      ->  |\   
+                       |  \         | ()
+                                           
+                       */
+                        ball.reverse();
+                    }
+                    else {
+                        /*
                         -------      --------
                          ()      ->       \ 
                         /                  ()
-                    */
-                    ball.deflectVertical();
-                    //this is terrible but I think it will work?
-                    //it doesnt
-                    if (btnArray[ball.nextMove()].Tag == "Top Border") {
+                        */
                         ball.deflectVertical();
                     }
-                    else if(btnArray[ball.nextMove()].Tag == "Brick") {
-                        /*
-                        --------         --------          ---------
-                          ()  []   -->     ()  []    -->       /  []
-                         /  []                               ()    
-                        */
-                        if (ball.getTrajectory() == 15) {
-                            btnArray[ball.nextMove()].Tag = "";
-                            btnArray[ball.nextMove()].BackColor = Color.Black;
-                            score++;
-                            skip = true;
-                            ball.reverse();
-                        }
-                        else if(ball.getTrajectory() == 17) {
-                            btnArray[ball.nextMove()].Tag = "";
-                            btnArray[ball.nextMove()].BackColor = Color.Black;
-                            score++;
-                            skip = true;
-                            ball.reverse();
-                        }
-                    }                  
+                    skip = true;                  
                 }
                 //bottom border collision
                 else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
@@ -481,7 +239,7 @@ namespace Brickbreaker {
 
                 //skip tick
                 if (!skip) {
-                    ball.update();
+                    ball.move();
                 }
                 else {
                     skip = false;
@@ -490,8 +248,7 @@ namespace Brickbreaker {
                 ScoreLabel.Text = ""+score;
 
                 if(brickCount == 0) {
-                    //load next level
-                    //nextLevel()
+                    nextLevel();
                 }
 
             }
@@ -527,7 +284,7 @@ namespace Brickbreaker {
                     btnArray[paddle.getIndex() + 3].BackgroundImage = Properties.Resources.Paddle;
                     btnArray[paddle.getIndex() + 3].Tag = "Paddle 3";
                 }
-                paddle.update();
+                paddle.move();
                 paddle.clear();
             }
         }
@@ -617,10 +374,18 @@ namespace Brickbreaker {
             paddleTimer.Stop();
 
             //if highscore, load highscore menu
-            //screen user input
+            //filter user input
             //if good, add to highscore sheet
 
             //close highscore menu
+
+            //load game over menu
+            //display highscores
+            //button to exit
+            //button to restart
+            //restart()
+
+            //else
 
             //load game over menu
             //display highscores
