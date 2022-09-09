@@ -2,9 +2,30 @@ namespace Brickbreaker {
     /// <summary>
     /// Collisions done
     /// todo:
-    /// 
+    ///     figure out initial sequence (random starts?)
+    ///         random paddle position
+    ///         random ball position, paddle index+15 _()_
+    ///         random initial trajectory, -17 || -15
+    ///         random ball speed? OR even better, each time you call nextLevel(), speed up the ball
+    ///     game over menu
+    ///     scoreboard
+    ///     highscores
+    ///     powerup 
+    ///         I want each section of the paddle to glow when it is collided with
+    ///         user presses spacebar to activate all glowing paddle sections to launch a projectile directly
+    ///         above it. destroys first brick on contact
+    ///         this will make the game more skill based and make the end of each level less annoying
+    ///         instead of waiting for the ball to randomly go hit that last piece
+    ///         last prio
+    ///         not MVP
     /// </summary>
 
+    /*
+
+    paddle = random (210-219)
+    ball = that-1
+
+    */
     public partial class Form1 : Form {
         //Global Variables :(
         int score;
@@ -28,9 +49,9 @@ namespace Brickbreaker {
             gameOver = false;
             btnArray = new Button[256];
             Gameboard.Controls.CopyTo(btnArray, 0);
-
-            ball = new Ball();
-            paddle = new Paddle();
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos);
+            ball = new Ball(initialPos - 15);
 
             ballTimer = new System.Windows.Forms.Timer();
             paddleTimer = new System.Windows.Forms.Timer();
@@ -227,14 +248,6 @@ namespace Brickbreaker {
                     }
                     else { }
 
-                    //skip tick
-                    //if (!skip) {
-                    //    ball.move();
-                    //}
-                    //else {
-                    //    skip = false;
-                    //}
-
                     if (brickCount == 0) {
                         nextLevel();
                     }
@@ -347,8 +360,9 @@ namespace Brickbreaker {
             }
 
             random = new Random();
-            ball = new Ball(); //what happens to the original? 
-            paddle = new Paddle(); //what happens to the original
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos); //what happens to the original
+            ball = new Ball(initialPos - 15); //what happens to the original? 
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -400,8 +414,9 @@ namespace Brickbreaker {
             }
 
             random = new Random();
-            ball = new Ball(); //what happens to the original? 
-            paddle = new Paddle(); //what happens to the original
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos); //what happens to the original
+            ball = new Ball(initialPos - 15); //what happens to the original? 
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
