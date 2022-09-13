@@ -19,7 +19,6 @@ namespace Brickbreaker {
         // - 15 = up-right
         // - 17 = up-left
 
-
         public Ball(int index) {
             random = new Random();
             currentIndex = index;

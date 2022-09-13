@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace Brickbreaker {
 
     //controls for player paddle
-
     internal class Paddle {
         private int index;
         private int nextMove;
