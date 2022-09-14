@@ -250,8 +250,7 @@ namespace Brickbreaker {
                 ScoreLabel.Text = "" + score;
             }
             else {
-                restart(); //testing
-                //gameOver() //display gameover menu / highscore / etc. 
+                displayGameOver() //display gameover menu / highscore / etc. 
             }
         }
 
@@ -367,7 +366,7 @@ namespace Brickbreaker {
             paddleTimer.Start();
         }
 
-        private void gameOverMenu() {
+        private void displayGameOver() {
             ballTimer.Stop();
             paddleTimer.Stop();
 
@@ -378,10 +377,13 @@ namespace Brickbreaker {
             //close highscore menu
 
             //load game over menu
-            //display highscores
-            //button to exit
-            //button to restart
-            //restart()
+            highscorePanel.Visible = true;
+            playAgainLabel.Visible = true;
+            continueButton.Visible = true;
+            exitButton.Visible = true;
+
+            //pull data / display highscores
+
 
             //else
 
@@ -396,6 +398,13 @@ namespace Brickbreaker {
         private void restart() {
             ballTimer.Stop(); //will this throw an error if the timer is already stopped?
             paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
+
+            //turn off UI elements
+            highscorePanel.Visible = false;
+            playAgainLabel.Visible = false;
+            continueButton.Visible = false;
+            exitButton.Visible = false;
+
             score = 0;
 
             foreach (Button btn in btnArray) {
@@ -422,6 +431,13 @@ namespace Brickbreaker {
             paddleTimer.Start();
         }
 
+        private void exitButton_Click(object sender, EventArgs e) {
+            Application.Exit();
+        }
+
+        private void continueButton_Click(object sender, EventArgs e) {
+            restart();
+        }
     }
 }
 
