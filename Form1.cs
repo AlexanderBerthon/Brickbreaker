@@ -1,18 +1,28 @@
 namespace Brickbreaker {
     /// <summary>
-    /// Collisions done
-    /// todo:
-    /// 
+    /// TODO:
+    ///     random brick colors? 
+    ///     game over menu
+    ///     scoreboard
+    ///     highscores
+    ///     powerup 
+    ///         I want each section of the paddle to glow when it is hit
+    ///         user presses spacebar to activate all glowing paddle sections to launch a projectile directly
+    ///         above it. destroys first brick on contact
+    ///         this will make the game more skill based and make the end of each level less annoying
+    ///         instead of waiting for the ball to randomly go hit that last piece
+    ///         last prio
+    ///         not MVP
     /// </summary>
-
+    
     public partial class Form1 : Form {
         //Global Variables :(
         int score;
         Random random = new Random();
         Button[] btnArray; 
-        Boolean gameOver;   //used to end the game / skip logic / load game over menu and final score menu
-        Boolean skip;       //used colission processing
-        int brickCount;     //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
+        Boolean gameOver;              //used to end the game / load game over menu and final score menu
+        Boolean checkCollision;        //used for collision processing
+        int brickCount;                //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
 
         Ball ball;
         Paddle paddle;
@@ -28,13 +38,16 @@ namespace Brickbreaker {
             gameOver = false;
             btnArray = new Button[256];
             Gameboard.Controls.CopyTo(btnArray, 0);
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos);
+            ball = new Ball(initialPos - 15);
 
-            ball = new Ball();
-            paddle = new Paddle();
+            checkCollision = false;
 
             ballTimer = new System.Windows.Forms.Timer();
             paddleTimer = new System.Windows.Forms.Timer();
 
+            //create paddle / initial paddle position
             //215, 216, 217
             //[index] [ += 1 ] [ += 2 ]
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
@@ -49,10 +62,10 @@ namespace Brickbreaker {
 
             //speed
             ballTimer.Interval = 300;
-            ballTimer.Tick += new EventHandler(TimerEventProcessor);
+            ballTimer.Tick += new EventHandler(TimerEventProcessor); //can these be renamed? BallTimerEventProcessor
 
             paddleTimer.Interval = 200;
-            paddleTimer.Tick += new EventHandler(TimerEventProcessor2);
+            paddleTimer.Tick += new EventHandler(TimerEventProcessor2); //can these be renamed? PaddleTimerEventProcessor
 
             //start
             ballTimer.Start();
@@ -64,7 +77,7 @@ namespace Brickbreaker {
             if (!gameOver) {
                 do {
                     btnArray[ball.getIndex()].BackgroundImage = null; //clear previous ball location
-                    skip = false;
+                    checkCollision = false;
                     //logic for left border collisions
                     if (btnArray[ball.nextMove()].Tag == "Left Border") {
                         if (btnArray[ball.getIndex() + 16].Tag == "Paddle 1" || btnArray[ball.getIndex() + 17].Tag == "Paddle 1") {
@@ -82,7 +95,7 @@ namespace Brickbreaker {
                             |  \         |                |            |  ()
                             */
                             ball.deflectHorizontal();
-                            skip = true; //pause to check for other collisions
+                            checkCollision = true; //loop to check for other collisions
                         }
                     }
                     //logic for right border collisions
@@ -102,10 +115,10 @@ namespace Brickbreaker {
                                 /  |              |               |          ()  |
                             */
                             ball.deflectHorizontal();
-                            skip = true;
+                            checkCollision = true;
                         }
                     }
-                    //left
+                    //logic for left brick collisions
                     else if (btnArray[ball.getIndex() - 1].Tag == "Brick") {
                         /*
                                              ()                /          
@@ -115,10 +128,10 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() - 1].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 1].Tag = "";
                         ball.deflectHorizontal();
-                        skip = true;
+                        checkCollision = true;
                         score++;
                     }
-                    //right
+                    //logic for right brick collisions
                     else if (btnArray[ball.getIndex() + 1].Tag == "Brick") {
                         /*
                                                ()               \                   
@@ -128,10 +141,10 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() + 1].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 1].Tag = "";
                         ball.deflectHorizontal();
-                        skip = true;
+                        checkCollision = true;
                         score++;
                     }
-                    //top
+                    //logic for top brick collisions
                     else if (btnArray[ball.getIndex() - 16].Tag == "Brick") {
                         /*
                             [][][]         []  []           []  []
@@ -141,10 +154,10 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() - 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() - 16].Tag = "";
                         ball.deflectVertical();
-                        skip = true;
+                        checkCollision = true;
                         score++;
                     }
-                    //bottom
+                    //logic for bottom brick collisions
                     else if (btnArray[ball.getIndex() + 16].Tag == "Brick") {
                         /*
                                               ()           ()  
@@ -154,10 +167,10 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() + 16].BackColor = Color.Black;
                         btnArray[ball.getIndex() + 16].Tag = "";
                         ball.deflectVertical();
-                        skip = true;
+                        checkCollision = true;
                         score++;
                     }
-                    //diagonal collision ~ logic holds for all 4 diagonal collisions
+                    //diagonal collision ~ logic holds for all 4 directions
                     else if (btnArray[ball.nextMove()].Tag == "Brick") {
                         /*
                            [][]          []  
@@ -167,7 +180,7 @@ namespace Brickbreaker {
                         btnArray[ball.nextMove()].BackColor = Color.Black;
                         btnArray[ball.nextMove()].Tag = "";
                         ball.reverse();
-                        skip = true;
+                        checkCollision = true;
                         score++;
                     }
                     //not sure if I can simplify these..
@@ -196,10 +209,11 @@ namespace Brickbreaker {
                         /*
                                \            ()
                                 ()   ->    / 
-                                ---      ___
+                                ---      ---
                         */
                         ball.deflectVertical();
                     }
+                    //logic for top border collisions
                     else if (btnArray[ball.nextMove()].Tag == "Top Border") {
                         if (btnArray[ball.getIndex() - 1].Tag == "Left Border" || btnArray[ball.getIndex() + 1].Tag == "Right Border") {
                             /*
@@ -218,34 +232,25 @@ namespace Brickbreaker {
                             */
                             ball.deflectVertical();
                         }
-                        skip = true;
+                        checkCollision = true;
                     }
-                    //bottom border collision
+                    //bottom border collision / game over
                     else if (btnArray[ball.nextMove()].Tag == "Bottom Border") {
-                        skip = false;
+                        checkCollision = false;
                         gameOver = true;
                     }
                     else { }
 
-                    //skip tick
-                    //if (!skip) {
-                    //    ball.move();
-                    //}
-                    //else {
-                    //    skip = false;
-                    //}
-
                     if (brickCount == 0) {
                         nextLevel();
                     }
-                } while (skip);
+                } while (checkCollision); //loop to check for multi-collisions
                 ball.move();
                 btnArray[ball.getIndex()].BackgroundImage = Properties.Resources.orb; //redraw ball
                 ScoreLabel.Text = "" + score;
             }
             else {
                 restart(); //testing
-                //Application.Exit();
                 //gameOver() //display gameover menu / highscore / etc. 
             }
         }
@@ -335,8 +340,8 @@ namespace Brickbreaker {
         }
 
         private void nextLevel() {
-            ballTimer.Stop();
-            paddleTimer.Stop();
+            ballTimer.Stop(); //will this throw an error if the timer is already stopped?
+            paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
 
             foreach (Button btn in btnArray) {
                 if (btn.Tag != "Left Border" && btn.Tag != "Right Border" && btn.Tag != "Top Border" && btn.Tag != "Bottom Border") {
@@ -346,9 +351,11 @@ namespace Brickbreaker {
                 }
             }
 
+            ballTimer.Interval -= 50; //speeds up tick rate for ball movement every time a level is cleared, makes the game progressively harder
             random = new Random();
-            ball = new Ball(); //what happens to the original? 
-            paddle = new Paddle(); //what happens to the original
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos); //what happens to the original
+            ball = new Ball(initialPos - 15); //what happens to the original? 
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -387,8 +394,8 @@ namespace Brickbreaker {
         }
 
         private void restart() {
-            ballTimer.Stop();
-            paddleTimer.Stop();
+            ballTimer.Stop(); //will this throw an error if the timer is already stopped?
+            paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
             score = 0;
 
             foreach (Button btn in btnArray) {
@@ -400,8 +407,9 @@ namespace Brickbreaker {
             }
 
             random = new Random();
-            ball = new Ball(); //what happens to the original? 
-            paddle = new Paddle(); //what happens to the original
+            int initialPos = random.Next(210, 219);
+            paddle = new Paddle(initialPos); //what happens to the original
+            ball = new Ball(initialPos - 15); //what happens to the original? 
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;

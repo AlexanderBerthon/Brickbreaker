@@ -19,11 +19,15 @@ namespace Brickbreaker {
         // - 15 = up-right
         // - 17 = up-left
 
-
-        public Ball() {
-            currentIndex = 171;
-            trajectory = +15;
+        public Ball(int index) {
             random = new Random();
+            currentIndex = index;
+            if(random.Next(0,2) == 0) {
+                trajectory = -15;
+            }
+            else {
+                trajectory = -17;
+            }
         }
 
         //moves the ball
