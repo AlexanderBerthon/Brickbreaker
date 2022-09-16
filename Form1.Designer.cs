@@ -4391,6 +4391,7 @@
             this.newHighScoreTextbox.PlaceholderText = "Enter name:";
             this.newHighScoreTextbox.Size = new System.Drawing.Size(100, 23);
             this.newHighScoreTextbox.TabIndex = 2;
+            this.newHighScoreTextbox.TextChanged += new System.EventHandler(this.NewHighScoreTextBox_TextChanged);
             // 
             // userInputErrorLabel
             // 

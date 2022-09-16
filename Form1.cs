@@ -4,8 +4,6 @@ namespace Brickbreaker {
     /// <summary>
     /// TODO:
     ///     random brick colors? 
-    ///     scoreboard
-    ///     highscores
     ///     powerup 
     ///         I want each section of the paddle to glow when it is hit
     ///         user presses spacebar to activate all glowing paddle sections to launch a projectile directly
@@ -14,14 +12,6 @@ namespace Brickbreaker {
     ///         instead of waiting for the ball to randomly go hit that last piece
     ///         last prio
     ///         not MVP
-    ///         
-    /// TESTING
-    /// program should crash, file not found exception
-    /// if it doesn't then the way it is set up is smart enough to create the file at the given location (doubt)
-    /// otherwise if it does crash then I should make some kind of logic to check for the existance of the file, and if it doesn't exist then create it and populate
-    /// 
-    /// 
-    /// 
     /// </summary>
     
     public partial class Form1 : Form {
@@ -63,7 +53,7 @@ namespace Brickbreaker {
             //create the highscore file if it doesn't exist
             if (!File.Exists(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt")) {
                 string[] temp = { "Jeff 0", "Kenny 0", "Taylor 0", "Alex 0", "Martin 0" };
-                File.WriteAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt", temp);
+                File.WriteAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt", temp); //creates files and populates with dummy data
             }
 
             inputData = System.IO.File.ReadAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt");
@@ -77,8 +67,7 @@ namespace Brickbreaker {
             }
 
             //create paddle / initial paddle position
-            //215, 216, 217
-            //[index] [ += 1 ] [ += 2 ]
+            //[index][ += 1 ][ += 2 ]
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -158,6 +147,7 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() - 1].Tag = "";
                         ball.deflectHorizontal();
                         checkCollision = true;
+                        brickCount--;
                         score++;
                     }
                     //logic for right brick collisions
@@ -171,6 +161,7 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() + 1].Tag = "";
                         ball.deflectHorizontal();
                         checkCollision = true;
+                        brickCount--;
                         score++;
                     }
                     //logic for top brick collisions
@@ -184,6 +175,7 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() - 16].Tag = "";
                         ball.deflectVertical();
                         checkCollision = true;
+                        brickCount--;
                         score++;
                     }
                     //logic for bottom brick collisions
@@ -197,6 +189,7 @@ namespace Brickbreaker {
                         btnArray[ball.getIndex() + 16].Tag = "";
                         ball.deflectVertical();
                         checkCollision = true;
+                        brickCount--;
                         score++;
                     }
                     //diagonal collision ~ logic holds for all 4 directions
@@ -210,6 +203,7 @@ namespace Brickbreaker {
                         btnArray[ball.nextMove()].Tag = "";
                         ball.reverse();
                         checkCollision = true;
+                        brickCount--;
                         score++;
                     }
                     //not sure if I can simplify these..
@@ -325,6 +319,7 @@ namespace Brickbreaker {
         //can this code be improved?
         //it is only run 1 time, and all of these variables are declared in a small scope, so.. it should be ok?
         private void brickPatternIni() {
+            brickCount = 0;
             int choice = random.Next(0, 7);
             List<int> brickPattern = new List<int>();
 
@@ -383,7 +378,7 @@ namespace Brickbreaker {
             random = new Random();
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos); //what happens to the original
-            ball = new Ball(initialPos - 15); //what happens to the original? 
+            ball = new Ball(initialPos - 15); //does this auto dispose of old data/reference?
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -400,12 +395,14 @@ namespace Brickbreaker {
             paddleTimer.Stop();
 
             Boolean newHighScore = false;
+
             //check for new highscore
             for (int i = 0; i < 5; i++) {
                 if (score >= highScores[i].getScore()) {
                     newHighScore = true;
                 }
             }
+
             if (newHighScore) {
                 //display new highscore UI
                 newHighScorePanel.Visible = true;
@@ -428,17 +425,6 @@ namespace Brickbreaker {
                 playAgainLabel.Visible = true;
                 continueButton.Visible = true;
                 exitButton.Visible = true;
-
-                //ctr+k+c / ctrl+k+u mass comment
-                ////is this necessary? this only runs if there ISNT a new highscore so the data in the file isn't being changed. no reason to overwrite it?
-                //String[] temp = new string[5];
-
-                ////write to file
-                //for (int i = 0; i < 5; i++) {
-                //    temp[i] = highScores[i].getName() + " " + highScores[i].getScore().ToString();
-                //}
-
-                //File.WriteAllLines(@"C:\Users\alex.berthon\source\repos\PacMan\highscoredata.txt", temp);
             }
         }
 
