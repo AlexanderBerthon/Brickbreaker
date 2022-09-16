@@ -1,5 +1,5 @@
-maximumpower 3
-TEST 2
-TEST 2
-TEST 2
-TEST 2
+ree 63
+Sid 27
+Sid 23
+ters 22
+broken 18
