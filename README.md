@@ -14,15 +14,15 @@
         <ul><s>Border</s></ul>
         <ul><s>Bricks</s></ul>
         <ul><s>Game Over Screen</s></ul>
-        <ul>Scoreboard</ul>
+        <ul><s>Scoreboard</s></ul>
       </ul>
-      <ul>Gameplay
+      <ul><s>Gameplay</s>
         <ul><s>Player Controls / Paddle</s></ul>
         <ul><s>Wall Collision</s></ul>
         <ul><s>Brick Collision</s></ul>
         <ul><s>Paddle Collision</s></ul>
         <ul><s>Points</s></ul>
-        <ul>Score Memory</ul>
+        <ul><s>Highscore Memory</s></ul>
         <ul><s>Main Game Loop</s>
         <ul><s>Game over</s></ul>
         <ul><s>Win condition</s></ul>
