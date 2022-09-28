@@ -10,6 +10,7 @@ namespace Brickbreaker {
     internal class Paddle {
         private int index;
         private int nextMove;
+        private int power; //testing
 
         public Paddle(int randomIndex) {
             index = randomIndex;
@@ -40,6 +41,23 @@ namespace Brickbreaker {
         //clears the stored next move
         public void clear() {
             nextMove = 0;
+        }
+
+        public Boolean isPoweredUp() {
+            Boolean poweredUp;
+            if(power == 3) {
+                poweredUp = true;
+            }
+            else {
+                poweredUp = false;
+            }
+            return poweredUp;
+        }
+
+        public void powerUp() {
+            if(power < 3) {
+                power++;
+            }
         }
 
     }

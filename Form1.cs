@@ -26,6 +26,12 @@ namespace Brickbreaker {
         Ball ball;
         Paddle paddle;
 
+        //testing
+        List<int> projectiles;
+
+        //end testing
+
+
         Highscore[] highScores;
 
         System.Windows.Forms.Timer ballTimer;
@@ -40,6 +46,10 @@ namespace Brickbreaker {
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos);
             ball = new Ball(initialPos - 15);
+
+            //testing
+            projectiles = new List<int>();
+            //end testing
 
             checkCollision = false;
 
@@ -105,6 +115,7 @@ namespace Brickbreaker {
                             |---        |---
                             */
                             ball.reverse();
+                            paddle.powerUp();
                         }
                         else {
                             /*
@@ -125,6 +136,7 @@ namespace Brickbreaker {
                             ---|       ---|
                             */
                             ball.reverse();
+                            paddle.powerUp();
                         }
                         else {
                             /*
@@ -215,6 +227,7 @@ namespace Brickbreaker {
                             ()___   ->    \___            
                         */
                         ball.reverse();
+                        paddle.powerUp();
                     }
                     //right edge paddle collision
                     else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
@@ -224,6 +237,7 @@ namespace Brickbreaker {
                             ___()   ->  ___/            
                         */
                         ball.reverse();
+                        paddle.powerUp();
                     }
                     //normal paddle collision
                     else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
@@ -235,6 +249,7 @@ namespace Brickbreaker {
                                 ---      ---
                         */
                         ball.deflectVertical();
+                        paddle.powerUp();
                     }
                     //logic for top border collisions
                     else if (btnArray[ball.nextMove()].Tag == "Top Border") {
@@ -280,6 +295,48 @@ namespace Brickbreaker {
         //paddle movement clock
         private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
+
+                //power up UI Element update here
+                //
+
+                //projectile code update here
+                for(int i = 0; i<projectiles.Count; i++) {
+                    if(btnArray[projectiles[i] - 16].Tag == "brick") {
+                        //destroy brick
+                        btnArray[projectiles[i] - 16].BackColor = Color.Black;
+                        btnArray[projectiles[i] - 16].Tag = "";
+                        //destroy projectile
+                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].Tag = "";
+                        //update variables
+                        brickCount--;
+                        score++;
+
+                        //this is some very sus code
+                        projectiles.RemoveAt(i); //it seems like this line is ignored ~ I'd skip it too tbh its horrible
+                        i--;
+                    }
+                    else if(btnArray[projectiles[i] - 16].Tag == "ball") {
+                        //destroy projectile
+                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].Tag = "";
+                        //this is some very sus code
+                        projectiles.RemoveAt(i);
+                        i--;
+                    }
+                    else {
+                        //clear previous projectile position
+                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].Tag = "";
+                        //update projectile position
+                        projectiles[i] -= 16;
+                        //redraw projectile
+                        btnArray[projectiles[i]].BackColor = Color.Red;
+                        btnArray[projectiles[i]].Tag = "projectile";
+
+                    }
+                }
+
                 if (paddle.getNextMove() == -1) {
                     //new slot
                     btnArray[paddle.getIndex() - 1].BackgroundImage = Properties.Resources.Paddle;
@@ -313,6 +370,19 @@ namespace Brickbreaker {
             }
             else if (e.KeyChar == 'd' && paddle.getIndex() < 220) {
                 paddle.queueMove(1);
+            }
+            else if(e.KeyChar == ' ') {
+                if (paddle.isPoweredUp()) {
+                    projectiles.Add(paddle.getIndex() - 16); //left
+                    projectiles.Add(paddle.getIndex() - 15); //middle
+                    projectiles.Add(paddle.getIndex() - 14); //right
+                    btnArray[paddle.getIndex() - 16].Tag = "projectile";
+                    btnArray[paddle.getIndex() - 16].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 15].Tag = "projectile";
+                    btnArray[paddle.getIndex() - 15].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 14].Tag = "projectile";
+                    btnArray[paddle.getIndex() - 14].BackColor = Color.Red;
+                }
             }
         }
 
