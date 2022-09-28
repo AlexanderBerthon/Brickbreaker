@@ -4428,7 +4428,7 @@
             this.Controls.Add(this.ScoreLabel);
             this.Controls.Add(this.Gameboard);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Brickbreaker";
             this.Gameboard.ResumeLayout(false);
             this.highscorePanel.ResumeLayout(false);
             this.highscorePanel.PerformLayout();
