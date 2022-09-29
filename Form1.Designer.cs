@@ -303,6 +303,8 @@
             this.newHighScoreTextbox = new System.Windows.Forms.TextBox();
             this.userInputErrorLabel = new System.Windows.Forms.Label();
             this.newHighScoreLabel = new System.Windows.Forms.Label();
+            this.powerUpProgress = new System.Windows.Forms.ProgressBar();
+            this.powerUpLabel = new System.Windows.Forms.Label();
             this.Gameboard.SuspendLayout();
             this.highscorePanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -603,8 +605,9 @@
             // 
             // button3
             // 
-            this.button3.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.button3.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.button3.FlatAppearance.BorderSize = 5;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Location = new System.Drawing.Point(40, 0);
             this.button3.Margin = new System.Windows.Forms.Padding(0);
@@ -4414,12 +4417,32 @@
             this.newHighScoreLabel.TabIndex = 0;
             this.newHighScoreLabel.Text = "New High Score!";
             // 
+            // powerUpProgress
+            // 
+            this.powerUpProgress.Location = new System.Drawing.Point(119, 336);
+            this.powerUpProgress.Maximum = 3;
+            this.powerUpProgress.Name = "powerUpProgress";
+            this.powerUpProgress.Size = new System.Drawing.Size(100, 23);
+            this.powerUpProgress.Step = 1;
+            this.powerUpProgress.TabIndex = 7;
+            // 
+            // powerUpLabel
+            // 
+            this.powerUpLabel.AutoSize = true;
+            this.powerUpLabel.Location = new System.Drawing.Point(51, 340);
+            this.powerUpLabel.Name = "powerUpLabel";
+            this.powerUpLabel.Size = new System.Drawing.Size(58, 15);
+            this.powerUpLabel.TabIndex = 8;
+            this.powerUpLabel.Text = "Power UP";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(344, 361);
+            this.Controls.Add(this.powerUpLabel);
+            this.Controls.Add(this.powerUpProgress);
             this.Controls.Add(this.newHighScorePanel);
             this.Controls.Add(this.highscorePanel);
             this.Controls.Add(this.playAgainLabel);
@@ -4723,5 +4746,7 @@
         private Label userInputErrorLabel;
         private TextBox newHighScoreTextbox;
         private Button confirmUserInputButton;
+        private ProgressBar powerUpProgress;
+        private Label powerUpLabel;
     }
 }

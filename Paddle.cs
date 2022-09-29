@@ -14,6 +14,7 @@ namespace Brickbreaker {
 
         public Paddle(int randomIndex) {
             index = randomIndex;
+            power = 0;
         }
 
         //moves the paddle
@@ -58,6 +59,10 @@ namespace Brickbreaker {
             if(power < 3) {
                 power++;
             }
+        }
+
+        public void powerDown() {
+            power = 0;
         }
 
     }

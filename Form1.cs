@@ -4,14 +4,6 @@ namespace Brickbreaker {
     /// <summary>
     /// TODO:
     ///     random brick colors? 
-    ///     powerup 
-    ///         I want each section of the paddle to glow when it is hit
-    ///         user presses spacebar to activate all glowing paddle sections to launch a projectile directly
-    ///         above it. destroys first brick on contact
-    ///         this will make the game more skill based and make the end of each level less annoying
-    ///         instead of waiting for the ball to randomly go hit that last piece
-    ///         last prio
-    ///         not MVP
     /// </summary>
     
     public partial class Form1 : Form {
@@ -26,11 +18,7 @@ namespace Brickbreaker {
         Ball ball;
         Paddle paddle;
 
-        //testing
         List<int> projectiles;
-
-        //end testing
-
 
         Highscore[] highScores;
 
@@ -46,10 +34,7 @@ namespace Brickbreaker {
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos);
             ball = new Ball(initialPos - 15);
-
-            //testing
             projectiles = new List<int>();
-            //end testing
 
             checkCollision = false;
 
@@ -116,6 +101,7 @@ namespace Brickbreaker {
                             */
                             ball.reverse();
                             paddle.powerUp();
+                            powerUpProgress.PerformStep();
                         }
                         else {
                             /*
@@ -137,6 +123,7 @@ namespace Brickbreaker {
                             */
                             ball.reverse();
                             paddle.powerUp();
+                            powerUpProgress.PerformStep();
                         }
                         else {
                             /*
@@ -228,6 +215,7 @@ namespace Brickbreaker {
                         */
                         ball.reverse();
                         paddle.powerUp();
+                        powerUpProgress.PerformStep();
                     }
                     //right edge paddle collision
                     else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
@@ -238,6 +226,7 @@ namespace Brickbreaker {
                         */
                         ball.reverse();
                         paddle.powerUp();
+                        powerUpProgress.PerformStep();
                     }
                     //normal paddle collision
                     else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
@@ -250,6 +239,7 @@ namespace Brickbreaker {
                         */
                         ball.deflectVertical();
                         paddle.powerUp();
+                        powerUpProgress.PerformStep();
                     }
                     //logic for top border collisions
                     else if (btnArray[ball.nextMove()].Tag == "Top Border") {
@@ -299,9 +289,17 @@ namespace Brickbreaker {
                 //power up UI Element update here
                 //
 
+                List<int> temp = new List<int>(); //this re-initializes the variable every tick. is that ok? or better to initialize once and refresh the value?
+                                                  //does it properly dispose of the old variable? 
+                                                  
                 //projectile code update here
                 for(int i = 0; i<projectiles.Count; i++) {
-                    if(btnArray[projectiles[i] - 16].Tag == "brick") {
+                    if (btnArray[projectiles[i] - 16].Tag == "Top Border") {
+                        //destroy projectile
+                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].Tag = "";
+                    }
+                    else if (btnArray[projectiles[i] - 16].Tag == "Brick") {
                         //destroy brick
                         btnArray[projectiles[i] - 16].BackColor = Color.Black;
                         btnArray[projectiles[i] - 16].Tag = "";
@@ -311,18 +309,11 @@ namespace Brickbreaker {
                         //update variables
                         brickCount--;
                         score++;
-
-                        //this is some very sus code
-                        projectiles.RemoveAt(i); //it seems like this line is ignored ~ I'd skip it too tbh its horrible
-                        i--;
                     }
                     else if(btnArray[projectiles[i] - 16].Tag == "ball") {
                         //destroy projectile
                         btnArray[projectiles[i]].BackColor = Color.Black;
                         btnArray[projectiles[i]].Tag = "";
-                        //this is some very sus code
-                        projectiles.RemoveAt(i);
-                        i--;
                     }
                     else {
                         //clear previous projectile position
@@ -334,8 +325,12 @@ namespace Brickbreaker {
                         btnArray[projectiles[i]].BackColor = Color.Red;
                         btnArray[projectiles[i]].Tag = "projectile";
 
+                        //add to temp array or array list
+                        //does it need to be an array list? why? need dynamic sizing and easy adding multiples
+                        temp.Add(projectiles[i]);
                     }
                 }
+                projectiles = temp;
 
                 if (paddle.getNextMove() == -1) {
                     //new slot
@@ -382,6 +377,8 @@ namespace Brickbreaker {
                     btnArray[paddle.getIndex() - 15].BackColor = Color.Red;
                     btnArray[paddle.getIndex() - 14].Tag = "projectile";
                     btnArray[paddle.getIndex() - 14].BackColor = Color.Red;
+                    powerUpProgress.Value = 0;
+                    paddle.powerDown();
                 }
             }
         }
@@ -449,6 +446,8 @@ namespace Brickbreaker {
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos); //what happens to the original
             ball = new Ball(initialPos - 15); //does this auto dispose of old data/reference?
+            projectiles = new List<int>();
+            powerUpProgress.Value = 0;
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -495,6 +494,11 @@ namespace Brickbreaker {
                 playAgainLabel.Visible = true;
                 continueButton.Visible = true;
                 exitButton.Visible = true;
+
+                //hide poweup UI
+                powerUpLabel.Visible = false;
+                powerUpProgress.Visible = false;
+                powerUpProgress.Value = 0;
             }
         }
 
@@ -507,6 +511,10 @@ namespace Brickbreaker {
             playAgainLabel.Visible = false;
             continueButton.Visible = false;
             exitButton.Visible = false;
+
+            //turn on UI elements
+            powerUpLabel.Visible = true;
+            powerUpProgress.Visible = true;
 
             score = 0;
 
@@ -522,6 +530,8 @@ namespace Brickbreaker {
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos); //what happens to the original
             ball = new Ball(initialPos - 15); //what happens to the original? 
+            projectiles = new List<int>();
+            powerUpProgress.Value = 0;
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
             btnArray[paddle.getIndex()].Tag = "Paddle 1";
             btnArray[paddle.getIndex() + 1].BackgroundImage = Properties.Resources.Paddle;
@@ -586,6 +596,11 @@ namespace Brickbreaker {
                     continueButton.Visible = true;
                     exitButton.Visible = true;
                     playAgainLabel.Visible = true;
+
+                    //hide powerUp UI
+                    powerUpLabel.Visible = false;
+                    powerUpProgress.Visible = false;
+                    powerUpProgress.Value = 0;
 
                     String[] temp = new string[5];
 
