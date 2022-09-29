@@ -3,7 +3,8 @@ using System.Text.RegularExpressions;
 namespace Brickbreaker {
     /// <summary>
     /// TODO:
-    ///     random brick colors? 
+    ///     random brick colors?
+    ///     fix powerup UI somehow
     /// </summary>
     
     public partial class Form1 : Form {
@@ -286,9 +287,6 @@ namespace Brickbreaker {
         private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
 
-                //power up UI Element update here
-                //
-
                 List<int> temp = new List<int>(); //this re-initializes the variable every tick. is that ok? or better to initialize once and refresh the value?
                                                   //does it properly dispose of the old variable? 
                                                   
@@ -296,7 +294,7 @@ namespace Brickbreaker {
                 for(int i = 0; i<projectiles.Count; i++) {
                     if (btnArray[projectiles[i] - 16].Tag == "Top Border") {
                         //destroy projectile
-                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].BackgroundImage = null;
                         btnArray[projectiles[i]].Tag = "";
                     }
                     else if (btnArray[projectiles[i] - 16].Tag == "Brick") {
@@ -304,7 +302,7 @@ namespace Brickbreaker {
                         btnArray[projectiles[i] - 16].BackColor = Color.Black;
                         btnArray[projectiles[i] - 16].Tag = "";
                         //destroy projectile
-                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].BackgroundImage = null;
                         btnArray[projectiles[i]].Tag = "";
                         //update variables
                         brickCount--;
@@ -312,17 +310,17 @@ namespace Brickbreaker {
                     }
                     else if(btnArray[projectiles[i] - 16].Tag == "ball") {
                         //destroy projectile
-                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].BackgroundImage = null;
                         btnArray[projectiles[i]].Tag = "";
                     }
                     else {
                         //clear previous projectile position
-                        btnArray[projectiles[i]].BackColor = Color.Black;
+                        btnArray[projectiles[i]].BackgroundImage = null;
                         btnArray[projectiles[i]].Tag = "";
                         //update projectile position
                         projectiles[i] -= 16;
                         //redraw projectile
-                        btnArray[projectiles[i]].BackColor = Color.Red;
+                        btnArray[projectiles[i]].BackgroundImage = Properties.Resources.projectile;
                         btnArray[projectiles[i]].Tag = "projectile";
 
                         //add to temp array or array list
@@ -372,11 +370,11 @@ namespace Brickbreaker {
                     projectiles.Add(paddle.getIndex() - 15); //middle
                     projectiles.Add(paddle.getIndex() - 14); //right
                     btnArray[paddle.getIndex() - 16].Tag = "projectile";
-                    btnArray[paddle.getIndex() - 16].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 16].BackgroundImage = Properties.Resources.projectile;
                     btnArray[paddle.getIndex() - 15].Tag = "projectile";
-                    btnArray[paddle.getIndex() - 15].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 15].BackgroundImage = Properties.Resources.projectile;
                     btnArray[paddle.getIndex() - 14].Tag = "projectile";
-                    btnArray[paddle.getIndex() - 14].BackColor = Color.Red;
+                    btnArray[paddle.getIndex() - 14].BackgroundImage = Properties.Resources.projectile;
                     powerUpProgress.Value = 0;
                     paddle.powerDown();
                 }
@@ -496,7 +494,6 @@ namespace Brickbreaker {
                 exitButton.Visible = true;
 
                 //hide poweup UI
-                powerUpLabel.Visible = false;
                 powerUpProgress.Visible = false;
                 powerUpProgress.Value = 0;
             }
@@ -513,7 +510,6 @@ namespace Brickbreaker {
             exitButton.Visible = false;
 
             //turn on UI elements
-            powerUpLabel.Visible = true;
             powerUpProgress.Visible = true;
 
             score = 0;
@@ -598,7 +594,6 @@ namespace Brickbreaker {
                     playAgainLabel.Visible = true;
 
                     //hide powerUp UI
-                    powerUpLabel.Visible = false;
                     powerUpProgress.Visible = false;
                     powerUpProgress.Value = 0;
 
@@ -705,5 +700,4 @@ Version Seven
 
 { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 50, 52, 54, 57, 59, 61, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94}
  */
-
 
