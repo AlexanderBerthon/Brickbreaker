@@ -4,7 +4,6 @@ namespace Brickbreaker {
     /// <summary>
     /// TODO:
     ///     random brick colors?
-    ///     fix powerup UI somehow
     /// </summary>
     
     public partial class Form1 : Form {
@@ -420,9 +419,43 @@ namespace Brickbreaker {
                     break;
             }
 
+            Color randomColor = new Color();
+            switch (random.Next(0, 10)) {
+                case 0:
+                    randomColor = Color.SaddleBrown;
+                    break;
+                case 1:
+                    randomColor = Color.Gold;
+                    break;
+                case 2:
+                    randomColor = Color.Green;
+                    break;
+                case 3:
+                    randomColor = Color.Aqua;
+                    break;
+                case 4:
+                    randomColor = Color.Plum;
+                    break;
+                case 5:
+                    randomColor = Color.DeepPink;
+                    break;
+                case 6:
+                    randomColor = Color.Navy;
+                    break;
+                case 7:
+                    randomColor = Color.White;
+                    break;
+                case 8:
+                    randomColor = Color.Olive;
+                    break;
+                case 9:
+                    randomColor = Color.DarkViolet;
+                    break;
+            }
+
             for (int i = 0; i < brickPattern.Count(); i++) {
                 btnArray[brickPattern[i]].Tag = "Brick";
-                btnArray[brickPattern[i]].BackColor = Color.DodgerBlue;
+                btnArray[brickPattern[i]].BackColor = randomColor;
                 brickCount++;
             }
         }
