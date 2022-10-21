@@ -29,14 +29,14 @@
         <ul><s>Game tick</s></ul>
         <ul><s>Restart</s></ul>
         </ul>
-        Testing
+        <s>Testing</s>
         </ul>
         </ul>
         </ul>
         <ul>Additional Features (not MVP)
         <ul>Brick Icons</ul>
         <ul>Collision Animation</ul>
-        <ul>Powerups</ul>
+        <ul><s>Powerups</s></ul>
         </ul>
   </section>
 
