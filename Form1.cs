@@ -1,11 +1,15 @@
 using System.Text.RegularExpressions;
 
-namespace Brickbreaker {
-    /// <summary>
-    /// TODO:
-    ///     random brick colors?
-    /// </summary>
-    
+/*
+Known Issues / Bugs
+ - ball speed is not reset on game over / new game
+
+TODO: 
+    - Fix bugs
+    - Add more patterns/levels (adds more variety and less chance of getting the same levels back to back)
+    - icon looks like a dead battery, really need to redesign it
+*/
+namespace Brickbreaker {    
     public partial class Form1 : Form {
         //Global Variables :(
         int score;
@@ -307,7 +311,7 @@ namespace Brickbreaker {
                         brickCount--;
                         score++;
                     }
-                    else if(btnArray[projectiles[i] - 16].Tag == "ball") {
+                    else if (btnArray[projectiles[i] - 16].Tag == "ball") {
                         //destroy projectile
                         btnArray[projectiles[i]].BackgroundImage = null;
                         btnArray[projectiles[i]].Tag = "";
@@ -355,7 +359,9 @@ namespace Brickbreaker {
                 paddle.clear();
             }
         }
-
+        /// <summary>
+        /// function for player/paddle movement
+        /// </summary>
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == 'a' && paddle.getIndex() > 209) {
                 paddle.queueMove(-1);
@@ -363,7 +369,7 @@ namespace Brickbreaker {
             else if (e.KeyChar == 'd' && paddle.getIndex() < 220) {
                 paddle.queueMove(1);
             }
-            else if(e.KeyChar == ' ') {
+            else if (e.KeyChar == ' ') {
                 if (paddle.isPoweredUp()) {
                     projectiles.Add(paddle.getIndex() - 16); //left
                     projectiles.Add(paddle.getIndex() - 15); //middle
@@ -380,8 +386,9 @@ namespace Brickbreaker {
             }
         }
 
-        //can this code be improved?
-        //it is only run 1 time, and all of these variables are declared in a small scope, so.. it should be ok?
+        /// <summary>
+        /// Function to randomly select a level design / brick pattern from a set of designs
+        /// </summary>
         private void brickPatternIni() {
             brickCount = 0;
             int choice = random.Next(0, 7);
@@ -460,6 +467,10 @@ namespace Brickbreaker {
             }
         }
 
+        /// <summary>
+        /// Loads the next level upon successful completion of the previous level
+        /// increases speed of the ball slightly
+        /// </summary>
         private void nextLevel() {
             ballTimer.Stop(); //will this throw an error if the timer is already stopped?
             paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
@@ -490,6 +501,11 @@ namespace Brickbreaker {
             paddleTimer.Start();
         }
 
+        /// <summary>
+        /// Displays the game over UI
+        /// If a new highscore is achieved display new highscore UI menu first
+        /// Disply highscores and buttons to try again or exit
+        /// </summary>
         private void displayGameOver() {
             ballTimer.Stop();
             paddleTimer.Stop();
@@ -532,6 +548,9 @@ namespace Brickbreaker {
             }
         }
 
+        /// <summary>
+        /// Restarts the game / new game
+        /// </summary>
         private void restart() {
             ballTimer.Stop(); //will this throw an error if the timer is already stopped?
             paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
@@ -569,18 +588,29 @@ namespace Brickbreaker {
             btnArray[paddle.getIndex() + 2].Tag = "Paddle 3";
             brickPatternIni();
             gameOver = false;
+            ballTimer.Interval = 300;
             ballTimer.Start();
             paddleTimer.Start();
         }
 
+        /// <summary>
+        /// Exits the application
+        /// </summary>
         private void exitButton_Click(object sender, EventArgs e) {
             Application.Exit();
         }
 
+        /// <summary>
+        /// click interaction, calls restart function
+        /// </summary>
         private void continueButton_Click(object sender, EventArgs e) {
             restart();
         }
 
+        /// <summary>
+        /// Helper function to update highscore sheet
+        /// error checking on user input to ensure proper format
+        /// </summary>
         private void confirmUserInputButton_Click(object sender, EventArgs e) {
             String userInput = "";
             Regex regex = new Regex("[0-9]");
@@ -642,6 +672,10 @@ namespace Brickbreaker {
             }
         }
 
+        /// <summary>
+        /// Helper function that clears error message upon user interaction on text box
+        /// Prevents a permanent error message showing , makes it more clear that format is incorrect on multiple user attempts at adding a new highscore
+        /// </summary>
         private void NewHighScoreTextBox_TextChanged(object sender, EventArgs e) {
             userInputErrorLabel.Visible = false;
         }

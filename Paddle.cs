@@ -46,7 +46,7 @@ namespace Brickbreaker {
 
         public Boolean isPoweredUp() {
             Boolean poweredUp;
-            if(power == 3) {
+            if (power == 3) {
                 poweredUp = true;
             }
             else {
@@ -56,7 +56,7 @@ namespace Brickbreaker {
         }
 
         public void powerUp() {
-            if(power < 3) {
+            if (power < 3) {
                 power++;
             }
         }

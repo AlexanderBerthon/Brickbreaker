@@ -35,7 +35,6 @@ namespace Brickbreaker {
                 if (s1.score > s2.score) {
                     return -1;
                 }
-
                 else {
                     return 0;
                 }
