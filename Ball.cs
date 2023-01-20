@@ -22,7 +22,7 @@ namespace Brickbreaker {
         public Ball(int index) {
             random = new Random();
             currentIndex = index;
-            if(random.Next(0,2) == 0) {
+            if (random.Next(0,2) == 0) {
                 trajectory = -15;
             }
             else {
@@ -92,7 +92,7 @@ namespace Brickbreaker {
                 trajectory = 17;
             }
             else if (trajectory == -16) {
-                if(random.Next(0,2) == 0) {
+                if (random.Next(0,2) == 0) {
                     trajectory = 15;
                 }
                 else {
