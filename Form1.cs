@@ -499,7 +499,7 @@ namespace Brickbreaker {
                 }
             }
 
-            ballTimer.Interval = ballTimer.Interval * 2;
+            ballTimer.Interval = 300 - score;
             random = new Random();
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos); //what happens to the original
