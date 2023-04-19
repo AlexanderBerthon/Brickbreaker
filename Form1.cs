@@ -9,13 +9,12 @@ TODO:
 */
 namespace Brickbreaker {    
     public partial class Form1 : Form {
-        //Global Variables :(
         int score;
         Random random = new Random();
         Button[] btnArray; 
-        Boolean gameOver;              //used to end the game / load game over menu and final score menu
-        Boolean checkCollision;        //used for collision processing
-        int brickCount;                //used to track the number of bricks that are active on the board. win condition. when brickCount = 0, go to next stage.
+        Boolean gameOver;              
+        Boolean checkCollision;        
+        int brickCount;              
 
         Ball ball;
         Paddle paddle;
@@ -218,6 +217,9 @@ namespace Brickbreaker {
                         ball.reverse();
                         paddle.powerUp();
                         powerUpProgress.PerformStep();
+
+                        ballTimer.Interval -= 10; //ball speed increase
+
                     }
                     //right edge paddle collision
                     else if (ball.getTrajectory() == 15 && btnArray[ball.nextMove()].Tag == "Paddle 3") {
@@ -229,6 +231,7 @@ namespace Brickbreaker {
                         ball.reverse();
                         paddle.powerUp();
                         powerUpProgress.PerformStep();
+                        ballTimer.Interval -= 10;//ball speed increase
                     }
                     //normal paddle collision
                     else if (btnArray[ball.nextMove()].Tag == "Paddle 1" ||
@@ -242,6 +245,9 @@ namespace Brickbreaker {
                         ball.deflectVertical();
                         paddle.powerUp();
                         powerUpProgress.PerformStep();
+
+                        ballTimer.Interval -= 10; //ball speed increase
+
                     }
                     //logic for top border collisions
                     else if (btnArray[ball.nextMove()].Tag == "Top Border") {
@@ -493,7 +499,7 @@ namespace Brickbreaker {
                 }
             }
 
-            ballTimer.Interval -= 50; //speeds up tick rate for ball movement every time a level is cleared, makes the game progressively harder
+            ballTimer.Interval = ballTimer.Interval * 2;
             random = new Random();
             int initialPos = random.Next(210, 219);
             paddle = new Paddle(initialPos); //what happens to the original
