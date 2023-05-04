@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.ApplicationServices;
 using System.Text.RegularExpressions;
 
 /*
@@ -6,6 +7,7 @@ Known Issues / Bugs
 TODO: 
     - Add more patterns/levels (adds more variety and less chance of getting the same levels back to back)
     - icon looks like a dead battery, really need to redesign it
+    - can't hardcode the highscore sheet. need to make this able to work on all computers
 */
 namespace Brickbreaker {    
     public partial class Form1 : Form {
@@ -47,12 +49,12 @@ namespace Brickbreaker {
             highScores = new Highscore[5];
 
             //create the highscore file if it doesn't exist
-            if (!File.Exists(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt")) {
+            if (!File.Exists("C:\\Users\\" + Environment.UserName + "\\Desktop\\Brickbreaker_Highscores.txt")) {
                 string[] temp = { "Jeff 0", "Kenny 0", "Taylor 0", "Alex 0", "Martin 0" };
-                File.WriteAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt", temp); //creates files and populates with dummy data
+                File.WriteAllLines("C:\\Users\\" + Environment.UserName + "\\Desktop\\Brickbreaker_Highscores.txt", temp); //creates files and populates with dummy data
             }
 
-            inputData = System.IO.File.ReadAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt");
+            inputData = System.IO.File.ReadAllLines("C:\\Users\\" + Environment.UserName + "\\Desktop\\Brickbreaker_Highscores.txt");
 
             if (inputData.Length > 0) {
                 for (int i = 0; i < inputData.Length; i++) {
@@ -395,7 +397,7 @@ namespace Brickbreaker {
         /// </summary>
         private void brickPatternIni() {
             brickCount = 0;
-            int choice = random.Next(0, 10);
+            int choice = random.Next(0, 11);
             List<int> brickPattern = new List<int>();
 
             int[] pattern0 = { 19, 20, 23, 24, 27, 28, 35, 36, 39, 40, 43, 44, 51, 52, 55, 56, 59, 60, 67, 68, 71, 72, 75, 76, 83, 84, 87, 88, 91, 92 };
@@ -408,6 +410,8 @@ namespace Brickbreaker {
             int[] pattern7 = { 17, 18, 19, 20, 21, 26, 27, 28, 29, 30, 33, 34, 35, 36, 43, 44, 45, 46, 49, 50, 51, 60, 61, 62, 65, 66, 77, 78, 81, 94 };
             int[] pattern8 = { 22, 23, 24, 25, 37, 38, 39, 40, 41, 42, 52, 53, 54, 55, 56, 57, 58, 59, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93 };
             int[] pattern9 = { 38, 39, 40, 41, 54, 55, 56, 57, 70, 71, 72, 73, 86, 87, 88, 89 };
+            int[] pattern10 = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94 };
+
 
             switch (choice) {
                 case 0:
@@ -439,6 +443,9 @@ namespace Brickbreaker {
                     break;
                 case 9:
                     brickPattern.AddRange(pattern9);
+                    break;
+                case 10:
+                    brickPattern.AddRange(pattern10);
                     break;
             }
 
@@ -683,7 +690,7 @@ namespace Brickbreaker {
                         temp[i] = highScores[i].getName() + " " + highScores[i].getScore().ToString();
                     }
 
-                    File.WriteAllLines(@"C:\Users\alex.berthon\source\repos\Brickbreaker\highscoredata.txt", temp);
+                    File.WriteAllLines("C:\\Users\\" + Environment.UserName + "\\Desktop\\Brickbreaker_Highscores.txt", temp);
                 }
             }
         }
@@ -812,5 +819,15 @@ Verson Ten
 80                86 87 88 89                95
  
 {38, 39, 40, 41, 54, 55, 56, 57, 70, 71, 72, 73, 86, 87, 88, 89}
- */
+
+Version Eleven
+00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
+16                                           31
+32                                           47
+48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63
+64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79
+80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95
+
+{49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94}
+*/
 
