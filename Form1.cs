@@ -7,7 +7,6 @@ Known Issues / Bugs
 TODO: 
     - Add more patterns/levels (adds more variety and less chance of getting the same levels back to back)
     - icon looks like a dead battery, really need to redesign it
-    - can't hardcode the highscore sheet. need to make this able to work on all computers
 */
 namespace Brickbreaker {    
     public partial class Form1 : Form {
@@ -208,7 +207,6 @@ namespace Brickbreaker {
                         brickCount--;
                         score++;
                     }
-                    //not sure if I can simplify these..
                     //left edge paddle collision
                     else if (ball.getTrajectory() == 17 && btnArray[ball.nextMove()].Tag == "Paddle 1") {
                         /*
@@ -296,8 +294,7 @@ namespace Brickbreaker {
         private void TimerEventProcessor2(Object anObject, EventArgs eventargs) {
             if (!gameOver) {
 
-                List<int> temp = new List<int>(); //this re-initializes the variable every tick. is that ok? or better to initialize once and refresh the value?
-                                                  //does it properly dispose of the old variable? 
+                List<int> temp = new List<int>();
                                                   
                 //projectile code update here
                 for(int i = 0; i<projectiles.Count; i++) {
@@ -333,7 +330,6 @@ namespace Brickbreaker {
                         btnArray[projectiles[i]].Tag = "projectile";
 
                         //add to temp array or array list
-                        //does it need to be an array list? why? need dynamic sizing and easy adding multiples
                         temp.Add(projectiles[i]);
                     }
                 }
@@ -365,9 +361,8 @@ namespace Brickbreaker {
                 paddle.clear();
             }
         }
-        /// <summary>
+
         /// function for player/paddle movement
-        /// </summary>
         private void Movement_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == 'a' && paddle.getIndex() > 209) {
                 paddle.queueMove(-1);
@@ -392,9 +387,7 @@ namespace Brickbreaker {
             }
         }
 
-        /// <summary>
         /// Function to randomly select a level design / brick pattern from a set of designs
-        /// </summary>
         private void brickPatternIni() {
             brickCount = 0;
             int choice = random.Next(0, 11);
@@ -490,13 +483,10 @@ namespace Brickbreaker {
             }
         }
 
-        /// <summary>
         /// Loads the next level upon successful completion of the previous level
-        /// increases speed of the ball slightly
-        /// </summary>
         private void nextLevel() {
-            ballTimer.Stop(); //will this throw an error if the timer is already stopped?
-            paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
             foreach (Button btn in btnArray) {
                 if (btn.Tag != "Left Border" && btn.Tag != "Right Border" && btn.Tag != "Top Border" && btn.Tag != "Bottom Border") {
@@ -509,8 +499,8 @@ namespace Brickbreaker {
             ballTimer.Interval = 300 - score;
             random = new Random();
             int initialPos = random.Next(210, 219);
-            paddle = new Paddle(initialPos); //what happens to the original
-            ball = new Ball(initialPos - 15); //does this auto dispose of old data/reference?
+            paddle = new Paddle(initialPos);
+            ball = new Ball(initialPos - 15);
             projectiles = new List<int>();
             powerUpProgress.Value = 0;
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
@@ -524,11 +514,9 @@ namespace Brickbreaker {
             paddleTimer.Start();
         }
 
-        /// <summary>
         /// Displays the game over UI
         /// If a new highscore is achieved display new highscore UI menu first
         /// Disply highscores and buttons to try again or exit
-        /// </summary>
         private void displayGameOver() {
             ballTimer.Stop();
             paddleTimer.Stop();
@@ -571,12 +559,10 @@ namespace Brickbreaker {
             }
         }
 
-        /// <summary>
         /// Restarts the game / new game
-        /// </summary>
         private void restart() {
-            ballTimer.Stop(); //will this throw an error if the timer is already stopped?
-            paddleTimer.Stop(); //will this throw an error if the timer is already stopped?
+            ballTimer.Stop();
+            paddleTimer.Stop();
 
             //turn off UI elements
             highscorePanel.Visible = false;
@@ -599,8 +585,8 @@ namespace Brickbreaker {
 
             random = new Random();
             int initialPos = random.Next(210, 219);
-            paddle = new Paddle(initialPos); //what happens to the original
-            ball = new Ball(initialPos - 15); //what happens to the original? 
+            paddle = new Paddle(initialPos);
+            ball = new Ball(initialPos - 15);
             projectiles = new List<int>();
             powerUpProgress.Value = 0;
             btnArray[paddle.getIndex()].BackgroundImage = Properties.Resources.Paddle;
@@ -616,24 +602,16 @@ namespace Brickbreaker {
             paddleTimer.Start();
         }
 
-        /// <summary>
-        /// Exits the application
-        /// </summary>
         private void exitButton_Click(object sender, EventArgs e) {
             Application.Exit();
         }
 
-        /// <summary>
-        /// click interaction, calls restart function
-        /// </summary>
         private void continueButton_Click(object sender, EventArgs e) {
             restart();
         }
 
-        /// <summary>
         /// Helper function to update highscore sheet
         /// error checking on user input to ensure proper format
-        /// </summary>
         private void confirmUserInputButton_Click(object sender, EventArgs e) {
             String userInput = "";
             Regex regex = new Regex("[0-9]");
@@ -695,10 +673,8 @@ namespace Brickbreaker {
             }
         }
 
-        /// <summary>
         /// Helper function that clears error message upon user interaction on text box
         /// Prevents a permanent error message showing , makes it more clear that format is incorrect on multiple user attempts at adding a new highscore
-        /// </summary>
         private void NewHighScoreTextBox_TextChanged(object sender, EventArgs e) {
             userInputErrorLabel.Visible = false;
         }
