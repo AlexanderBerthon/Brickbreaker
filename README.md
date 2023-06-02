@@ -1,43 +1,23 @@
 # Brickbreaker
 <html>
   <section>
-    <h2>This project will attempt to replicate the game "Brickbreaker"</h2>
+    This project attempts to replicate the game 'brickbreaker'. 
+    
+    Use the paddle to bounce the ball and break all of the colored tiles to get points. 
+    When all bricks are broken, the game will move onto another level. 
+    Break as many bricks as possible to get a highscore. 
+    Every time the ball hits the paddle, you will notice the progress bar at the bottom fills up.
+    When the bar is full, press the space bar to fire off some projectiles.
+    Use this power up to clear the level faster or take out an isolated brick.
+    The speed of the ball increases over time making the game increasingly difficult, good luck!
+
   </section>
   <section>
-    <ul>To Do for MVP:
-      <ul>Front End
-        <ul>Application Icon</ul>
-        <ul><s>Button Grid</s></ul>
-        <ul><s>Ball Icon</s></ul>
-        <ul><s>Paddle Icon</s></ul>
-        <ul><s>Paddle</s></ul>
-        <ul><s>Border</s></ul>
-        <ul><s>Bricks</s></ul>
-        <ul><s>Game Over Screen</s></ul>
-        <ul><s>Scoreboard</s></ul>
+      <ul>Controls
+        <ul>A - Move paddle left</ul>
+        <ul>D - Move paddle right</ul>
+        <ul>Spacebar - Fire powerup</ul>
       </ul>
-      <ul><s>Gameplay</s>
-        <ul><s>Player Controls / Paddle</s></ul>
-        <ul><s>Wall Collision</s></ul>
-        <ul><s>Brick Collision</s></ul>
-        <ul><s>Paddle Collision</s></ul>
-        <ul><s>Points</s></ul>
-        <ul><s>Highscore Memory</s></ul>
-        <ul><s>Main Game Loop</s>
-        <ul><s>Game over</s></ul>
-        <ul><s>Win condition</s></ul>
-        <ul><s>Game tick</s></ul>
-        <ul><s>Restart</s></ul>
-        </ul>
-        <s>Testing</s>
-        </ul>
-        </ul>
-        </ul>
-        <ul>Additional Features (not MVP)
-        <ul>Brick Icons</ul>
-        <ul>Collision Animation</ul>
-        <ul><s>Powerups</s></ul>
-        </ul>
   </section>
 
 
