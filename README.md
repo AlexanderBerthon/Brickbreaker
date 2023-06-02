@@ -4,12 +4,12 @@
     This project attempts to replicate the game 'brickbreaker'. 
     
     Use the paddle to bounce the ball and break all of the colored tiles to get points. 
-    When all bricks are broken, the game will move onto another level. 
+    When all bricks are broken, the game will move to another level. 
     Break as many bricks as possible to get a highscore. 
-    Every time the ball hits the paddle, you will notice the progress bar at the bottom fills up.
+    Every time the ball hits the paddle, the progress bar at the bottom fills up.
     When the bar is full, press the space bar to fire off some projectiles.
     Use this power up to clear the level faster or take out an isolated brick.
-    The speed of the ball increases over time making the game increasingly difficult, good luck!
+    The ball speeds up over time making the game increasingly difficult, good luck!
 
   </section>
   <section>
